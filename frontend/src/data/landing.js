@@ -8,7 +8,7 @@ import {
   BarChart3,
   PieChart,
 } from "lucide-react";
-
+import { RiMotorbikeFill } from "react-icons/ri";
 // Stats Data
 export const statsData = [
   {
@@ -31,7 +31,7 @@ export const statsData = [
 
 export const featuresData = [
   {
-    // icon: <BikeIcon className="h-8 w-8 text-green-600" />,
+    // icon: <RiMotorbikeFill className="h-8 w-8 text-green-600" />,
     title: "Buy Bikes",
     description:
       "Browse and purchase bikes from a wide variety of styles and models, all in one place.",

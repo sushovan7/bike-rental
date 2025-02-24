@@ -3,7 +3,6 @@ import React from "react";
 function Accordion() {
   return (
     <div className=" container mb-20 flex flex-col gap-2 mx-auto p-4 sm:w-[80%] md:[w-60%]">
-      <h1 className="text-2xl">Some FAQs:</h1>
       <div className="collapse collapse-plus bg-base-200">
         <input type="radio" name="my-accordion-3" defaultChecked />
         <div className="collapse-title text-lg font-medium">

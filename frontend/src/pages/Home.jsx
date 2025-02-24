@@ -5,6 +5,7 @@ import Stats from "../components/stats";
 import HeroFeatures from "../components/HeroFeatures";
 import HeroTestimonial from "../components/HeroTestimonial";
 import HowItWorks from "../components/HowItWorks";
+import NewsLetter from "../components/NewsLetter";
 function Home() {
   return (
     <div>
@@ -14,6 +15,7 @@ function Home() {
       <HowItWorks />
       <Accordion />
       <HeroTestimonial />
+      <NewsLetter />
     </div>
   );
 }
