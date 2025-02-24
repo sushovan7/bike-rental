@@ -3,6 +3,13 @@ import { userModel } from "../models/user.models.js";
 import { uploadOnCloudinary } from "../utils/cloudinaryConfig.js";
 import { generateToken } from "../utils/generateToken.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import crypto from "crypto";
+import transporter from "../utils/nodemailerConfig.js";
+import {
+  resetPasswordLinkEmail,
+  successPasswordResetMail,
+} from "../utils/emailTemplate.js";
 
 export async function signup(req, res) {
   try {
@@ -212,6 +219,159 @@ export async function logout(req, res) {
     return res.status(500).json({
       success: false,
       message: "Failed to Log out",
+    });
+  }
+}
+
+export async function refreshAccessToken(req, res) {
+  try {
+    const userId = req.user._id;
+
+    const user = await userModel.findById(userId).select("-password");
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const refreshToken = user.refreshToken;
+
+    if (!refreshToken) {
+      return res.status(400).json({
+        success: false,
+        message: "No refresh token found",
+      });
+    }
+
+    const decodedToken = jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET
+    );
+
+    if (!decodedToken) {
+      return res.status(400).json({
+        success: false,
+        message: "Unauthorized request",
+      });
+    }
+
+    const accessToken = jwt.sign(
+      {
+        _id: userId,
+      },
+      process.env.ACCESS_TOKEN_SECRET,
+      {
+        expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
+      }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Successfully refreshed accessToken",
+      token: accessToken,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to refresh accessToken",
+    });
+  }
+}
+
+export async function forgotPassword(req, res) {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    const user = await userModel.findOne({
+      email,
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const resetToken = crypto.randomBytes(20).toString("hex");
+    const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000;
+
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordTokenExpiresAt = resetTokenExpiresAt;
+
+    await user.save();
+
+    // send mail with password reset link
+
+    const resetPasswordContent = resetPasswordLinkEmail(resetToken);
+
+    await transporter.sendMail({
+      from: "bhattaraisushovan999@gmail.com",
+      to: email,
+      subject: "Reset passowrd link",
+      html: resetPasswordContent,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Password reset link sent to your email",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong during forgot password",
+    });
+  }
+}
+
+export async function resetPassword(req, res) {
+  try {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    if (!password) {
+      return res.status(400).json({
+        success: false,
+        message: "Password is required",
+      });
+    }
+
+    const user = userModel.findOne({
+      resetPasswordToken: token,
+      resetPasswordTokenExpiresAt: {
+        $gt: Date.now(),
+      },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired reset token",
+      });
+    }
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordTokenExpiresAt = undefined;
+    await user.save();
+
+    await transporter.sendMail({
+      from: "bhattaraisushovan999@gmail.com",
+      to: user.email,
+      subject: "Password reset successfully",
+      html: successPasswordResetMail,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to reset password",
     });
   }
 }
