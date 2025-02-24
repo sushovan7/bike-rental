@@ -323,6 +323,7 @@ export async function forgotPassword(req, res) {
     return res.status(200).json({
       success: true,
       message: "Password reset link sent to your email",
+      token: resetToken,
     });
   } catch (error) {
     return res.status(500).json({
@@ -334,6 +335,21 @@ export async function forgotPassword(req, res) {
 
 export async function resetPassword(req, res) {
   try {
+    const requiredUserData = z.object({
+      password: z
+        .string()
+        .min(8, { message: "Password must be at least 8 characters long" }),
+    });
+
+    const requiredBody = requiredUserData.safeParse(req.body);
+
+    if (!requiredBody.success) {
+      return res.status(409).json({
+        success: false,
+        message: "Invalid inputs",
+      });
+    }
+
     const { token } = req.params;
     const { password } = req.body;
 
@@ -344,7 +360,7 @@ export async function resetPassword(req, res) {
       });
     }
 
-    const user = userModel.findOne({
+    const user = await userModel.findOne({
       resetPasswordToken: token,
       resetPasswordTokenExpiresAt: {
         $gt: Date.now(),
@@ -365,8 +381,13 @@ export async function resetPassword(req, res) {
     await transporter.sendMail({
       from: "bhattaraisushovan999@gmail.com",
       to: user.email,
-      subject: "Password reset successfully",
+      subject: "Password reset successful",
       html: successPasswordResetMail,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Password changed successfully",
     });
   } catch (error) {
     return res.status(500).json({

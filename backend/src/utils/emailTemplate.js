@@ -86,7 +86,7 @@ export const successPasswordResetMail = `<!DOCTYPE html>
         <div class="container">
             <h2>Password Reset Successful</h2>
             <p>Your password has been successfully reset. You can now log in with your new password.</p>
-            <p>If you didn't request this change, please contact our support immediately.</p>
+            <p>If you didn't request this change, please ignore this message.</p>
             <a href="${process.env.CLIENT_URL}/login" class="btn">Go to Login</a>
         </div>
     </body>

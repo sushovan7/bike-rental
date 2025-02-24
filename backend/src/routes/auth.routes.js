@@ -15,7 +15,7 @@ export const authRouter = express.Router();
 authRouter.post("/signup", upload.single("avatar"), signup);
 authRouter.post("/signin", signin);
 authRouter.post("/forgot-password", forgotPassword);
-authRouter.post("/reset-passwor/:token", resetPassword);
+authRouter.post("/reset-password/:token", resetPassword);
 
 // secured routes
 authRouter.post("/logout", auth, logout);
