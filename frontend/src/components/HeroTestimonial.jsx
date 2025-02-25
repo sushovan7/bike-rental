@@ -1,4 +1,4 @@
-import { testimonialsData } from "../data/landing";
+import { testimonialsData } from "../data/Landing";
 
 function HeroTestimonial() {
   return (

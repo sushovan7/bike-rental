@@ -1,4 +1,4 @@
-import { statsData } from "../data/landing";
+import { statsData } from "../data/Landing";
 
 function Stats() {
   return (

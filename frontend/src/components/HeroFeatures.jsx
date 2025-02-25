@@ -1,4 +1,4 @@
-import { featuresData } from "../data/landing";
+import { featuresData } from "../data/Landing";
 
 function HeroFeatures() {
   return (
@@ -12,12 +12,12 @@ function HeroFeatures() {
           featuresData.map((feature, index) => (
             <div
               key={index}
-              className="card bg-base-100 w-full sm:w-96 md:w-80 lg:w-96 shadow-xl rounded-lg"
+              className="card bg-base-100 py-3 w-full sm:w-96 md:w-80 lg:w-96 shadow-xl rounded-lg"
             >
-              <div className="flex justify-center mb-4">
+              <div className="flex justify-center ">
                 <div className="text-4xl">{feature.icon}</div>
               </div>
-              <div className="card-body text-center">
+              <div className="card-body py-2 text-center">
                 <p className="font-bold text-lg mb-2">{feature.title}</p>
                 <p className="text-gray-400">{feature.description}</p>
               </div>
