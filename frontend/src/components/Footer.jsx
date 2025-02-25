@@ -4,7 +4,6 @@ import logo from "../assets/logo.webp";
 function Footer() {
   const location = useLocation();
 
-  // Function to scroll the page to the top
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -117,7 +116,6 @@ function Footer() {
         Copyright {new Date().getFullYear()}@REELEIIC - All Right Reserved.
       </div>
 
-      {/* Scroll-to-top button */}
       <button
         onClick={scrollToTop}
         className="fixed bottom-8 right-8  border-2 cursor-pointer border-[#5753E8] text-white rounded-full p-2   focus:outline-none"

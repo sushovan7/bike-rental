@@ -115,7 +115,7 @@ function Signup() {
 
         <p className="text-sm text-gray-500 mt-3 text-center">
           Already have an account?{" "}
-          <a href="/login" className="text-blue-500">
+          <a href="/login" className="text-[#5753E8]">
             Log in
           </a>
         </p>

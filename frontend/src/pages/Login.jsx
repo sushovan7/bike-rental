@@ -24,14 +24,14 @@ function Login() {
         <button className="btn btn-primary w-full mt-3 shadow-lg">Login</button>
 
         <p className="text-sm text-gray-500 mt-3 text-center">
-          <a href="#" className="text-blue-500">
+          <a href="#" className="text-[#5753E8]">
             Forgot your password?
           </a>
         </p>
 
         <p className="text-sm text-gray-500 mt-3 text-center">
           Don&apos;t have an account?{" "}
-          <a href="/signup" className="text-blue-500">
+          <a href="/signup" className="text-[#5753E8]">
             Sign up
           </a>
         </p>
