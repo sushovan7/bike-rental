@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 function HeroSection() {
   return (
     <div className="pb-20 ">
-      <section className="container pt-28 md:h-[80vh]   flex flex-col px-4 items-center md:justify-center  mx-auto ">
+      <section className="container pt-20 md:h-[80vh]   flex flex-col px-4 items-center md:justify-center  mx-auto ">
         <div className="flex mb-8 items-center justify-center gap-2 flex-col">
           <h1 className="text-[5vh] md:text-[7vh] font-bold text-center font-mono">
             Ride Your Way:
@@ -14,13 +14,23 @@ function HeroSection() {
             <span>Rent</span>,<span>Buy</span>,<span>Explore</span>
           </h1>
           <p className="text-center text-lg md:w-[50vw] md:text-xl mb-10 text-gray-400">
-            Find the <span className="text-white">perfect bike</span> for every
-            journey. Whether you need a{" "}
-            <span className="text-white">quick rental</span> for an adventure or
-            want to,
-            <span className="text-white"> buy your dream ride</span> we make it{" "}
-            {""}
-            <span className="text-white">simple and hassle-free.</span>
+            Find the{" "}
+            <span className="text-white underline decoration-[#5654E7] decoration-3">
+              perfect bike
+            </span>{" "}
+            for every journey. Whether you need a{" "}
+            <span className="text-white underline decoration-[#5654E7] decoration-3">
+              quick rental
+            </span>{" "}
+            for an adventure or want to,buy your
+            <span className="text-white underline decoration-[#5654E7] decoration-3">
+              {" "}
+              dream ride
+            </span>{" "}
+            we make it {""}
+            <span className="text-white underline decoration-[#5654E7] decoration-3">
+              simple and hassle-free.
+            </span>
           </p>
           <ul className="text-center  flex items-start justify-center flex-col">
             <li className="flex items-start md:text-lg gap-2 text-md ">

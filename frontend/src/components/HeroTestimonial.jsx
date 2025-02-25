@@ -6,13 +6,13 @@ function HeroTestimonial() {
       <h1 className="text-2xl font-bold text-center mb-12">
         What Our Users Say
       </h1>
-      <div className="flex flex-col md:flex-row gap-6 justify-center">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap gap-6 justify-center">
         {testimonialsData &&
           testimonialsData.length > 0 &&
           testimonialsData.map((item, index) => (
             <div
               key={index}
-              className="card bg-base-100 p-4 w-96 shadow-xl rounded-lg"
+              className="card bg-base-100 p-4 w-full sm:w-96 shadow-xl rounded-lg"
             >
               <div className="flex items-center gap-4 mb-4">
                 <div className="avatar">

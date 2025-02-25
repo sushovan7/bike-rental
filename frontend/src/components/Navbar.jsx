@@ -3,7 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 
 function Navbar() {
   return (
-    <div className="navbar bg-base-100 border-b border-gray-600 ">
+    <div className="navbar bg-base-100 border-b mb-5 border-gray-600 px-4">
       <div className="dropdown">
         <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
           <svg

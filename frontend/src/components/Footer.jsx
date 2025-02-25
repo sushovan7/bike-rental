@@ -10,7 +10,7 @@ function Footer() {
 
   return (
     <>
-      <div className="mt-28 sm:flex sm:gap-8 p-4 sm:flex-row w-full flex flex-col gap-12 min-h-[20vh]">
+      <div className="mt-28 sm:flex sm:gap-8 px-4 sm:flex-row w-full flex flex-col gap-12 min-h-[20vh]">
         <div className="flex items-start sm:w-[45%] flex-col gap-6">
           <Link
             to={"/"}

@@ -18,7 +18,7 @@ function Contact() {
         />
       </div>
 
-      <div className="flex flex-col lg:flex-row items-center lg:min-h-[40vh] lg:gap-20 mt-10">
+      <div className="flex flex-col lg:flex-row items-center lg:min-h-[40vh] lg:gap-20 mt-10 mb-5">
         <div className="w-full lg:w-[50%] overflow-hidden">
           <img
             src={contactImg}
