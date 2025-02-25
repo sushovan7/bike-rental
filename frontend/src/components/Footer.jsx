@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/logo.webp";
+import { useEffect, useState } from "react";
 
 function Footer() {
   const location = useLocation();
@@ -112,8 +113,12 @@ function Footer() {
         </div>
       </div>
       <hr className="w-full mt-10 h-[1px] bg-gray-400" />
-      <div className="py-4 text-white text-md text-center w-full font-bold">
-        Copyright {new Date().getFullYear()}@REELEIIC - All Right Reserved.
+      <div className="flex items-center justify-between">
+        {" "}
+        <div className="py-4 text-white text-md text-center w-full font-bold">
+          Copyright {new Date().getFullYear()}@REELEIIC - All Right Reserved.
+        </div>
+        <LocalTime />
       </div>
 
       <button
@@ -128,3 +133,24 @@ function Footer() {
 }
 
 export default Footer;
+
+const LocalTime = () => {
+  const [time, setTime] = useState(new Date());
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const readableTime = time.toLocaleTimeString();
+
+  return (
+    <div className="flex items-center gap-2 mr-4">
+      <div className="h-4 w-4 rounded-full bg-[#605DFF]"></div>
+      <p>{readableTime}</p>
+    </div>
+  );
+};
