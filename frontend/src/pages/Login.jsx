@@ -1,91 +1,40 @@
-import React from "react";
-import Input from "../components/Input";
-import Label from "../components/Label";
-import { Lock, Mail, Mars, User } from "lucide-react";
-
 function Login() {
   return (
-    <div className="flex w-screen  justify-center mt-30">
-      <form
-        className="shadow-lg sm:w-[55%] w-[80%] flex flex-col sm:gap-3 gap-5  items-center justify-center  px-5 py-10"
-        action=""
-      >
-        <div className="flex flex-col gap-2 sm:flex-row sm:w-[80%] w-full items-center justify-between ">
-          <div className="flex flex-col">
-            <Label htmlFor={"Firstname"}>Firstname:</Label>
-            <Input
-              type={"text"}
-              placeholder={"Firstname"}
-              id={"Firstname"}
-              startIcon={<User size={15} />}
-            />
-          </div>
-          <div className="flex flex-col ">
-            <Label htmlFor={"Lastname"}>Lastname:</Label>
-            <Input
-              type={"text"}
-              placeholder={"Lastname"}
-              id={"Lastname"}
-              startIcon={<User size={15} />}
-            />
-          </div>
+    <div className="flex items-center justify-center min-h-screen px-4">
+      <form className="shadow-xl w-full max-w-md flex flex-col gap-6 items-center justify-center px-6 py-10 rounded-2xl bg-white">
+        <h2 className="text-2xl font-semibold text-gray-800">Welcome Back!</h2>
+        <p className="text-gray-500 text-sm text-center">Login to continue</p>
+
+        <div className="w-full">
+          <input
+            type="email"
+            placeholder="Email"
+            className="input input-bordered w-full rounded-lg shadow-md"
+          />
+          <p className="text-xs text-red-500">error</p>
         </div>
-        <div className="flex flex-col gap-2 sm:flex-row w-full sm:w-[80%] items-center  justify-between ">
-          <div className="flex flex-col items-start">
-            <Label htmlFor={"Email"}>Email:</Label>
-            <Input
-              type={"email"}
-              placeholder={"example@gmail.com"}
-              id={"Email"}
-              startIcon={<Mail size={15} />}
-            />
-          </div>
-          <div className="flex flex-col ">
-            <Label htmlFor={"Password"}>Password:</Label>
-            <Input
-              type={"password"}
-              placeholder={"Password"}
-              id={"Passworde"}
-              startIcon={<Lock size={15} />}
-            />
-          </div>
+        <div className="w-full">
+          <input
+            type="password"
+            placeholder="Password"
+            className="input input-bordered w-full rounded-lg shadow-md"
+          />
+          <p className="text-xs text-red-500">error</p>
         </div>
-        <div className="flex flex-col gap-2 sm:flex-row w-full sm:w-[80%]  items-center justify-between ">
-          <div className="flex  flex-col mt-4">
-            <Label>Gender:</Label>
-            <div className="flex items-center gap-3">
-              <label>
-                <input type="radio" name="gender" value="male" /> Male
-              </label>
-              <label>
-                <input type="radio" name="gender" value="female" /> Female
-              </label>
-              <label>
-                <input type="radio" name="gender" value="other" /> Other
-              </label>
-            </div>
-          </div>
-          <div className="flex flex-col">
-            <Label htmlFor={"Age"}>Age:</Label>
-            <Input
-              type={"number"}
-              placeholder={"Your age"}
-              id={"Age"}
-              startIcon={<Mars size={15} />}
-            />
-          </div>
-        </div>
-        <div className="flex flex-col items-start justify-start">
-          <Label>Avatar</Label>
-          <div className="avatar">
-            <div className="w-20 rounded">
-              <img
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                alt="Tailwind-CSS-Avatar-component"
-              />
-            </div>
-          </div>
-        </div>
+        <button className="btn btn-primary w-full mt-3 shadow-lg">Login</button>
+
+        <p className="text-sm text-gray-500 mt-3 text-center">
+          <a href="#" className="text-blue-500">
+            Forgot your password?
+          </a>
+        </p>
+
+        <p className="text-sm text-gray-500 mt-3 text-center">
+          Don&apos;t have an account?{" "}
+          <a href="/signup" className="text-blue-500">
+            Sign up
+          </a>
+        </p>
       </form>
     </div>
   );

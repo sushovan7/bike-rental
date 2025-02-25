@@ -1,4 +1,3 @@
-import React from "react";
 import { featuresData } from "../data/landing";
 
 function HeroFeatures() {
@@ -15,7 +14,7 @@ function HeroFeatures() {
               <div className="flex justify-center mb-4">{feature.icon}</div>
               <div className="card-body">
                 <p className="font-bold text-lg">{feature.title}</p>
-                <p>{feature.description}</p>
+                <p className="text-gray-400">{feature.description}</p>
               </div>
             </div>
           ))}

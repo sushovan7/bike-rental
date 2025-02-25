@@ -1,5 +1,3 @@
-import React from "react";
-
 function NewsLetter() {
   return (
     <div className="w-full py-2 mb-20 flex flex-col  gap-2 items-center  ">
@@ -9,8 +7,10 @@ function NewsLetter() {
         </h1>
       </div>
       <p className="text-sm w-full sm:w-[60%] text-center text-gray-400">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi totam in,
-        sed et architecto repudiandae!
+        Join our newsletter and enjoy 10% off your first bike rental or
+        purchase! Stay updated on the latest deals, new arrivals, and exclusive
+        offers. Whether you&apos;re looking to rent for an adventure or buy your
+        dream bike, we&apos;ve got you covered!
       </p>
       <div className="mt-2 w-full sm:[80%] justify-center flex  ">
         <input

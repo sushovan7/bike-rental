@@ -1,5 +1,3 @@
-import React from "react";
-
 function Footer() {
   return (
     <div className="container mx-auto  p-4 mt-20">
@@ -19,7 +17,7 @@ function Footer() {
           <p className="font-bold">
             ACME Industries Ltd.
             <br />
-            Providing reliable tech since 1992
+            Providing reliable tech since 2024
           </p>
           <p>Copyright © {new Date().getFullYear()} - All right reserved</p>
         </aside>

@@ -1,60 +1,50 @@
 import { Check } from "lucide-react";
-import React from "react";
+
 import { Link } from "react-router-dom";
 
 function HeroSection() {
   return (
-    <div className="container mx-auto h-[80vh] mb-20 items-center  flex pt-20 p-4">
-      <div className="w-full flex items-center  flex-col gap-6 ">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-6xl tracking-tighter text-center font-mono">
-            Adventure on
+    <div className="pb-20 ">
+      <section className="container pt-28 md:h-[80vh]   flex flex-col px-4 items-center md:justify-center  mx-auto ">
+        <div className="flex mb-8 items-center justify-center gap-2 flex-col">
+          <h1 className="text-[5vh] md:text-[7vh] font-bold text-center font-mono">
+            Ride Your Way:
           </h1>
-          <h1 className="text-6xl text-center font-bold text-[#605DFF] font-mono">
-            Two wheels
+          <h1 className="text-3xl md:text-[7vh] text-[#605DFF] font-mono font-bold  mb-10">
+            <span>Rent</span>,<span>Buy</span>,<span>Explore</span>
           </h1>
-        </div>
-        <div className="flex items-center justify-center w-[70vw]">
-          <p className=" text-sm text-center text-gray-400">
-            Looking to rent or buy? Find the perfect bike for your needs.
-            Experience <span className="text-white font-bold">convenience</span>
-            , <span className="text-white font-bold">affordability</span>, and{" "}
-            <span className="text-white font-bold">quality </span> with our{" "}
-            <span className="text-white font-bold">hassle-free</span> bike
-            rentals and purchases.
+          <p className="text-center text-lg md:w-[50vw] md:text-xl mb-10 text-gray-400">
+            Find the <span className="text-white">perfect bike</span> for every
+            journey. Whether you need a{" "}
+            <span className="text-white">quick rental</span> for an adventure or
+            want to,
+            <span className="text-white"> buy your dream ride</span> we make it{" "}
+            {""}
+            <span className="text-white">simple and hassle-free.</span>
           </p>
+          <ul className="text-center  flex items-start justify-center flex-col">
+            <li className="flex items-start md:text-lg gap-2 text-md ">
+              <Check />
+              Rent bikes hassle-free.
+            </li>
+            <li className="flex items-center md:text-lg gap-2 text-md ">
+              <Check />
+              Own the ride you love.
+            </li>
+            <li className="flex items-center md:text-lg gap-2 text-md justify-center">
+              <Check />
+              Explore with confidence.
+            </li>
+          </ul>
         </div>
-
-        <ul className="text-gray-400 text-sm">
-          <li className="flex items-center gap-2">
-            <span>
-              <Check size={"15"} />
-            </span>
-            <p>Flexible Rentals & Purchases</p>
-          </li>
-          <li className="flex items-center gap-2">
-            <span>
-              <Check size={"15"} />
-            </span>
-            <p>Premium, Well-Maintained Bikes</p>
-          </li>
-          <li className="flex items-center gap-2">
-            <span>
-              <Check size={"15"} />
-            </span>
-            <p>Affordable, Transparent Pricing</p>
-          </li>
-          <li className="flex items-center gap-2">
-            <span>
-              <Check size={"15"} />
-            </span>
-            <p>Seamless Booking & Delivery</p>
-          </li>
-        </ul>
-        <Link to={"/inventory"} className="btn btn-accent btn-lg mt-5">
-          Explore Products
+        <Link
+          to={"/inventory"}
+          size="lg"
+          className="bg-[#5753E8] hover:bg-[#635ee8] cursor-pointer text-white text-lg py-8 px-10 rounded-lg"
+        >
+          Get Started
         </Link>
-      </div>
+      </section>
     </div>
   );
 }

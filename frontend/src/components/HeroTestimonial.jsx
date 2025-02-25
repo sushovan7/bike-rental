@@ -1,4 +1,3 @@
-import React from "react";
 import { testimonialsData } from "../data/landing";
 
 function HeroTestimonial() {
@@ -26,11 +25,11 @@ function HeroTestimonial() {
                     </div>
                     <div>
                       <p className="font-bold text-lg">{item.name}</p>
-                      <p className="text-xs">{item.role}</p>
+                      <p className="text-xs text-gray-400">{item.role}</p>
                     </div>
                   </div>
                   <div>
-                    <p className="text-sm mt-3">{item.quote}</p>
+                    <p className="text-sm mt-3 text-gray-400">{item.quote}</p>
                   </div>
                 </div>
               </div>

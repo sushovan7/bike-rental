@@ -17,7 +17,7 @@ function HowItWorks() {
                   <p>{item.icon}</p>
                 </div>
                 <p className="text-lg font-bold text-center">{item.title}</p>
-                <p className="text-center">{item.description}</p>
+                <p className="text-center text-gray-400">{item.description}</p>
               </div>
             );
           })}

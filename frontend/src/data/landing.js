@@ -1,31 +1,31 @@
-import {
-  Bike,
-  Calendar,
-  CreditCard,
-  MapPin,
-  CheckCircle,
-  Clock,
-  BarChart3,
-  PieChart,
-} from "lucide-react";
-import { RiMotorbikeFill } from "react-icons/ri";
+// import {
+//   Bike,
+//   Calendar,
+//   CreditCard,
+//   MapPin,
+//   CheckCircle,
+//   Clock,
+//   BarChart3,
+//   PieChart,
+// } from "lucide-react";
+// import { RiMotorbikeFill } from "react-icons/ri";
 // Stats Data
 export const statsData = [
   {
-    value: "50K+",
-    label: "Active Users",
+    value: "10K+",
+    label: "Happy Riders",
   },
   {
-    value: "$2B+",
-    label: "Transactions Tracked",
+    value: "4k+",
+    label: "Bikes Rented & Sold",
   },
   {
     value: "99.9%",
     label: "Uptime",
   },
   {
-    value: "4.9/5",
-    label: "User Rating",
+    value: "4.8/5",
+    label: "Customer Satisfaction",
   },
 ];
 
