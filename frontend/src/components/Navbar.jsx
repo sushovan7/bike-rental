@@ -1,5 +1,4 @@
-import { Bike } from "lucide-react";
-import React from "react";
+import logo from "../assets/logo.webp";
 import { Link, NavLink } from "react-router-dom";
 
 function Navbar() {
@@ -35,9 +34,16 @@ function Navbar() {
       <div className="navbar-start">
         <Link
           to={"/"}
-          className=" flex gap-2 sm:text-2xl items-center font-mono font-bold "
+          className=" flex gap-2 sm:text-2xl items-center  font-bold italic overflow-hidden"
         >
-          <Bike size={"20px"} /> Bike Rental
+          <img
+            src={logo}
+            alt=""
+            width={40}
+            height={40}
+            className="rounded-full"
+          />
+          REELEIIC
         </Link>
       </div>
       <div className="navbar-center hidden lg:flex">

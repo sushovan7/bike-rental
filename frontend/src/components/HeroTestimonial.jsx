@@ -2,39 +2,32 @@ import { testimonialsData } from "../data/landing";
 
 function HeroTestimonial() {
   return (
-    <section className="flex px-4 mb-20 w-full gap-10 items-center justify-center flex-col ">
-      <h1 className="text-2xl text-center font-bold">What ours users say</h1>
-      <div className="flex flex-col md:flex-row gap-6 ">
-        {" "}
+    <section className="px-6 mb-20 w-full flex flex-col items-center">
+      <h1 className="text-2xl font-bold text-center mb-12">
+        What Our Users Say
+      </h1>
+      <div className="flex flex-col md:flex-row gap-6 justify-center">
         {testimonialsData &&
           testimonialsData.length > 0 &&
-          testimonialsData.map((item, index) => {
-            return (
-              <div
-                key={index}
-                className="card bg-base-100 p-2 px-4 w-96 shadow-xl"
-              >
-                <div className="px-4">
-                  {" "}
-                  <div className="flex items-center gap-4">
-                    {" "}
-                    <div className="avatar">
-                      <div className="w-10 rounded-full">
-                        <img src={item.image} />
-                      </div>
-                    </div>
-                    <div>
-                      <p className="font-bold text-lg">{item.name}</p>
-                      <p className="text-xs text-gray-400">{item.role}</p>
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-sm mt-3 text-gray-400">{item.quote}</p>
+          testimonialsData.map((item, index) => (
+            <div
+              key={index}
+              className="card bg-base-100 p-4 w-96 shadow-xl rounded-lg"
+            >
+              <div className="flex items-center gap-4 mb-4">
+                <div className="avatar">
+                  <div className="w-10 rounded-full">
+                    <img src={item.image} alt={item.name} />
                   </div>
                 </div>
+                <div>
+                  <p className="font-bold text-lg">{item.name}</p>
+                  <p className="text-xs text-gray-400">{item.role}</p>
+                </div>
               </div>
-            );
-          })}
+              <p className="text-sm text-gray-400">{item.quote}</p>
+            </div>
+          ))}
       </div>
     </section>
   );

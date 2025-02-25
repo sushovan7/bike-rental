@@ -80,7 +80,7 @@ export const howItWorksData = [
     // icon: <BarChart3 className="h-8 w-8 text-green-600" />,
     title: "2. Rent a Bike",
     description:
-      "Easily rent bikes for a few hours or days from our location-based rentals. Convenient and flexible!",
+      "Easily rent bikes for a few days or months from our location-based rentals. Convenient and flexible and affordable!",
   },
   {
     // icon: <PieChart className="h-8 w-8 text-green-600" />,
