@@ -23,7 +23,7 @@ function Navbar() {
         </div>
         <ul
           tabIndex={0}
-          className="menu menu-sm flex flex-col gap-4 dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+          className="menu menu-sm flex flex-col gap-4 dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2  pb-4 shadow-lg"
         >
           <Link to={"/"}>Home</Link>
           <Link to={"/inventory"}>Inventory</Link>
@@ -47,10 +47,12 @@ function Navbar() {
         </Link>
       </div>
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal flex gap-6 px-1">
+        <ul className="menu menu-horizontal flex gap-8 px-4 py-2">
           <NavLink
             className={({ isActive }) =>
-              isActive ? "text-white font-bold underline " : "text-gray-400"
+              isActive
+                ? "text-white font-bold underline"
+                : "text-gray-400 hover:text-gray-200 transition-colors duration-200"
             }
             to={"/"}
           >
@@ -58,7 +60,9 @@ function Navbar() {
           </NavLink>
           <NavLink
             className={({ isActive }) =>
-              isActive ? "text-white font-bold underline " : "text-gray-400"
+              isActive
+                ? "text-white font-bold underline"
+                : "text-gray-400 hover:text-gray-200 transition-colors duration-200"
             }
             to={"/inventory"}
           >
@@ -66,7 +70,9 @@ function Navbar() {
           </NavLink>
           <NavLink
             className={({ isActive }) =>
-              isActive ? "text-white font-bold underline " : "text-gray-400"
+              isActive
+                ? "text-white font-bold underline"
+                : "text-gray-400 hover:text-gray-200 transition-colors duration-200"
             }
             to={"/about"}
           >
@@ -74,7 +80,9 @@ function Navbar() {
           </NavLink>
           <NavLink
             className={({ isActive }) =>
-              isActive ? "text-white font-bold underline " : "text-gray-400"
+              isActive
+                ? "text-white font-bold underline"
+                : "text-gray-400 hover:text-gray-200 transition-colors duration-200"
             }
             to={"/contact"}
           >

@@ -120,7 +120,7 @@ function Footer() {
       {/* Scroll-to-top button */}
       <button
         onClick={scrollToTop}
-        className="fixed bottom-8 right-8 bg-[#605DFF] text-white rounded-full p-2 shadow-md  focus:outline-none"
+        className="fixed bottom-8 right-8  border-2 cursor-pointer border-[#5753E8] text-white rounded-full p-2   focus:outline-none"
         aria-label="Scroll to top"
       >
         ↑
