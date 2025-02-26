@@ -1,7 +1,48 @@
+import { useDispatch, useSelector } from "react-redux";
 import logo from "../assets/logo.webp";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import toast from "react-hot-toast";
+
+import { logout } from "../features/auth/authSlice";
+import { useState } from "react";
 
 function Navbar() {
+  const navigate = useNavigate();
+  const { token, user } = useSelector((state) => state.auth);
+  console.log(token, user);
+
+  const [open, setOpen] = useState(false);
+  const dispatch = useDispatch();
+  const mutation = useMutation({
+    mutationKey: ["logout"],
+    mutationFn: async (logoutData) => {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/auth/logout`,
+        logoutData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (data.success) {
+        dispatch(logout());
+        toast.success("Logout successful!");
+        navigate("/");
+      }
+    },
+  });
+
+  function handleLogout(data = {}) {
+    console.log(data);
+    mutation.mutate(data);
+  }
+
   return (
     <div className="navbar bg-base-100 border-b mb-5 border-gray-600 px-4">
       <div className="dropdown">
@@ -92,9 +133,49 @@ function Navbar() {
       </div>
 
       <div className="navbar-end">
-        <Link to={"/login"} className="btn btn-primary">
-          Login
-        </Link>
+        {token ? (
+          <>
+            <div
+              className="dropdown dropdown-end"
+              onClick={() => setOpen(true)}
+            >
+              <div tabIndex={0} role="button" className="avatar">
+                <div className="ring-primary ring-offset-base-100 w-12 rounded-full ring ring-offset-2">
+                  <img
+                    className="object-cover"
+                    src={user?.avatar || "https://via.placeholder.com/40"}
+                    alt="Avatar"
+                  />
+                </div>
+              </div>
+              {open && (
+                <ul
+                  tabIndex={0}
+                  className="menu dropdown-content z-50 bg-base-100 rounded-lg shadow-lg w-48 p-2 mt-3"
+                >
+                  <li>
+                    <a className="hover:bg-[#5753E8] rounded-lg">Profile</a>
+                  </li>
+                  <li>
+                    <a className="hover:bg-[#5753E8] rounded-lg">Settings</a>
+                  </li>
+                  <li>
+                    <button
+                      className="hover:bg-[#5753E8] rounded-lg"
+                      onClick={() => handleLogout()}
+                    >
+                      Logout
+                    </button>
+                  </li>
+                </ul>
+              )}
+            </div>
+          </>
+        ) : (
+          <Link to={"/login"} className="btn btn-primary">
+            Login
+          </Link>
+        )}
       </div>
     </div>
   );

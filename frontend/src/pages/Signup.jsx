@@ -12,6 +12,7 @@ function Signup() {
   const navigate = useNavigate();
 
   const mutation = useMutation({
+    mutationKey: ["signup"],
     mutationFn: async (signupData) => {
       const formData = new FormData();
 
@@ -31,20 +32,25 @@ function Signup() {
           },
         }
       );
-      console.log(response.data);
       return response.data;
     },
 
-    onSuccess: (response) => {
-      toast.success(
-        response.success ? response.message : "User registered successfully"
-      );
+    onSuccess: (data) => {
+      if (data.success) {
+        toast.success("User registered successfully!");
+      }
       reset();
       navigate("/login");
     },
 
-    onError: () => {
-      toast.error("User registration failed.");
+    onError: (error) => {
+      if (error.response) {
+        const errorMessage =
+          error.response.data?.message || "User registration failed.";
+        toast.error(errorMessage);
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
     },
   });
 

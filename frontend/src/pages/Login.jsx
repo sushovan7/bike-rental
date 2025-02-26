@@ -3,12 +3,17 @@ import axios from "axios";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+
 import { useNavigate } from "react-router-dom";
+import { setToken } from "../features/auth/authSlice";
 
 function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const mutation = useMutation({
+    mutationKey: ["login"],
     mutationFn: async (loginData) => {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_BASE_URL}/auth/signin`,
@@ -19,17 +24,26 @@ function Login() {
           },
         }
       );
+      console.log(response);
       return response.data;
     },
-    onSuccess: (response) => {
-      toast.success(
-        response.success ? response.message : "User logged in successfully"
-      );
+    onSuccess: (data) => {
+      console.log(data);
+      if (data.success) {
+        dispatch(setToken({ token: data.accessToken, user: data.data }));
+        toast.success("Login successful!");
+      }
       reset();
       navigate("/");
     },
-    onError: () => {
-      toast.error("Login failed");
+    onError: (error) => {
+      if (error.response) {
+        const errorMessage =
+          error.response.data?.message || "User login failed.";
+        toast.error(errorMessage);
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
     },
   });
 
