@@ -24,7 +24,7 @@ function Login() {
         <button className="btn btn-primary w-full mt-3 shadow-lg">Login</button>
 
         <p className="text-sm text-gray-500 mt-3 text-center">
-          <a href="#" className="text-[#5753E8]">
+          <a href="/forgot-password" className="text-[#5753E8]">
             Forgot your password?
           </a>
         </p>

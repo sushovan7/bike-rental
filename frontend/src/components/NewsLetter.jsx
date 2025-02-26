@@ -2,9 +2,7 @@ function NewsLetter() {
   return (
     <div className="w-full py-10 mb-20 flex flex-col gap-6 items-center">
       <div className="text-2xl font-bold mb-4">
-        <h1 className="font-mono tracking-tight">
-          Subscribe Now & Get 10% Off
-        </h1>
+        <h1 className=" ">Subscribe Now & Get 10% Off</h1>
       </div>
       <p className="text-sm sm:w-[70%] text-center text-gray-400 mb-6">
         Join our newsletter and enjoy 10% off your first bike rental or
