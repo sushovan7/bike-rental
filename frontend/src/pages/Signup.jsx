@@ -1,58 +1,138 @@
 import { useState } from "react";
 import uploadImg from "../assets/uploadimg.png";
+import { useForm } from "react-hook-form";
 
 function Signup() {
-  const [profileImg, setProfileImg] = useState(false);
+  const [profileImg, setProfileImg] = useState(null);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setError,
+    clearErrors,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      age: "",
+      gender: "",
+      avatar: null,
+    },
+  });
+
+  const selectedGender = watch("gender");
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    if (!file) {
+      setError("avatar", { type: "manua;", message: "Avatar is required" });
+    } else {
+      console.log(file);
+      setProfileImg(file);
+      setValue("avatar", file, { shouldValidate: true });
+      clearErrors("avatar");
+    }
+  };
+
+  function onSubmit(data) {
+    if (!data.avatar) {
+      setError("avatar", { type: "manual", message: "Avatar is required" });
+      return;
+    }
+    console.log("form submitted", data);
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen px-4">
-      <form className="shadow-xl w-full max-w-md flex flex-col gap-6 items-center justify-center px-6 py-10 rounded-2xl bg-white">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="shadow-xl w-full max-w-md flex flex-col gap-6 items-center justify-center px-6 py-10 rounded-2xl bg-white"
+      >
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">
           Create Your Account
         </h2>
 
         <div className="w-full">
           <input
+            {...register("firstName", { required: "Firstname is required" })}
             type="text"
             placeholder="First Name"
             className="input input-bordered w-full rounded-lg shadow-md"
           />
-          <p className="text-xs text-red-500">error</p>
+          {errors.firstName && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.firstName.message}
+            </p>
+          )}
         </div>
 
         <div className="w-full">
           {" "}
           <input
+            {...register("lastName", { required: "Lastname is required" })}
             type="text"
             placeholder="Last Name"
             className="input input-bordered w-full rounded-lg shadow-md"
           />
-          <p className="text-xs text-red-500">error</p>
+          {errors.lastName && (
+            <p className="text-xs mt-1 text-red-500">
+              {errors.lastName.message}
+            </p>
+          )}
         </div>
         <div className="w-full">
           <input
+            {...register("email", {
+              required: "Email is required",
+              pattern: {
+                value: /^\S+@\S+\.\S+$/,
+                message: "Invalid email address",
+              },
+            })}
             type="email"
             placeholder="Email"
             className="input input-bordered w-full rounded-lg shadow-md"
           />
-          <p className="text-xs text-red-500">error</p>
+          {errors.email && (
+            <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>
+          )}
         </div>
         <div className="w-full">
           <input
             type="password"
+            {...register("password", {
+              required: "Password is required",
+              minLength: {
+                value: 8,
+                message: "Password must be atleast 8 characters long",
+              },
+            })}
             placeholder="Password"
             className="input input-bordered w-full rounded-lg shadow-md"
           />
-          <p className="text-xs text-red-500">error</p>
+          {errors.password && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.password.message}
+            </p>
+          )}
         </div>
         <div className="w-full">
           {" "}
           <input
+            {...register("age", { required: "Age is required" })}
             type="number"
             placeholder="Age"
             className="input input-bordered w-full rounded-lg shadow-md"
           />
-          <p className="text-xs text-red-500">error</p>
+          {errors.age && (
+            <p className="text-xs text-red-500">{errors.age.message}</p>
+          )}
         </div>
 
         <div className="flex w-full flex-col ">
@@ -60,33 +140,39 @@ function Signup() {
             <label className="label cursor-pointer">
               <span className="label-text text-[#1D232A]">Male</span>
               <input
+                {...register("gender", { required: "Gender is required" })}
                 type="radio"
-                name="gender"
-                value="male"
+                value="MALE"
                 className="radio radio-primary"
               />
             </label>
             <label className="label cursor-pointer">
               <span className="label-text text-[#1D232A]">Female</span>
               <input
+                {...register("gender", { required: "Gender is required" })}
                 type="radio"
-                name="gender"
-                value="female"
+                value="FEMALE"
                 className="radio radio-primary"
               />
             </label>
             <label className="label cursor-pointer">
               <span className="label-text text-[#1D232A]">Other</span>
               <input
+                {...register("gender", { required: "Gender is required" })}
                 type="radio"
-                name="gender"
-                value="other"
+                value="OTHERS"
                 className="radio radio-primary"
               />
             </label>
           </div>
-
-          <p className="text-xs text-red-500">error</p>
+          {errors.gender && (
+            <p className="text-xs text-red-500">{errors.gender.message}</p>
+          )}
+          {selectedGender && (
+            <p className="mt-2 text-[#605DFF]">
+              You selected: {selectedGender}
+            </p>
+          )}
         </div>
 
         <div className="flex flex-col w-full items-center">
@@ -103,13 +189,15 @@ function Signup() {
               type="file"
               id="image1"
               hidden
-              onChange={(e) => setProfileImg(e.target.files[0])}
+              onChange={handleImageChange}
             />
           </label>
-          <p className="text-xs text-red-500">error</p>
+          {errors.avatar && (
+            <p className="text-xs text-red-500">{errors.avatar.message}</p>
+          )}
         </div>
 
-        <button className="btn btn-primary w-full mt-3 shadow-lg">
+        <button type="submit" className="btn btn-primary w-full mt-3 shadow-lg">
           Sign Up
         </button>
 

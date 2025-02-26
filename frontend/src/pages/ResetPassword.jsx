@@ -1,9 +1,25 @@
-import { Lock, CheckCircle } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 
 const ResetPassword = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    watch,
+  } = useForm({
+    defaultValues: {
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  function onSubmit(data) {
+    console.log(data);
+  }
 
   return (
     <div className="flex items-center justify-center h-screen  px-4">
@@ -22,30 +38,48 @@ const ResetPassword = () => {
             </Link>
           </div>
         ) : (
-          <form className="mt-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
             <div className="relative mb-3">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 8,
+                    message: "Password must be atleast 8 characters long",
+                  },
+                })}
                 type="password"
                 placeholder="New Password"
                 className="input input-bordered w-full pl-10 bg-gray-700 text-white border-gray-600 focus:border-primary focus:ring-primary"
-                required
               />
+              {errors.password && (
+                <p className="text-xs text-red-500 mt-2">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
+                {...register("confirmPassword", {
+                  required: "Please confirm your password",
+                  validate: (value) =>
+                    value === watch("password") || "Passwords do not match",
+                })}
                 type="password"
                 placeholder="Confirm Password"
                 className="input input-bordered w-full pl-10 bg-gray-700 text-white border-gray-600 focus:border-primary focus:ring-primary"
-                required
               />
+              {errors.confirmPassword && (
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.confirmPassword.message}
+                </p>
+              )}
             </div>
 
             <button
               type="submit"
-              onClick={() => setIsSubmitted(true)}
+              onClick={() => setIsSubmitted(false)}
               className="btn btn-primary w-full mt-4"
             >
               Reset Password
