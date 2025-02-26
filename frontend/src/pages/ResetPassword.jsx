@@ -1,15 +1,45 @@
-import { CheckCircle } from "lucide-react";
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { CheckCircle, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
+import { Link, useParams } from "react-router-dom";
 
 const ResetPassword = () => {
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const { resetToken } = useParams();
+
+  const mutation = useMutation({
+    mutationFn: async (resetPasswordData) => {
+      const response = await axios.post(
+        `${
+          import.meta.env.VITE_BACKEND_BASE_URL
+        }/auth/reset-password/${resetToken}`,
+        resetPasswordData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    },
+    onSuccess: (response) => {
+      toast.success(
+        response.success ? response.message : "Password changed successfully"
+      );
+      reset();
+    },
+    onError: () => {
+      toast.error("Failed to reset password");
+    },
+  });
+
   const {
     register,
     formState: { errors },
     handleSubmit,
     watch,
+    reset,
   } = useForm({
     defaultValues: {
       password: "",
@@ -18,7 +48,8 @@ const ResetPassword = () => {
   });
 
   function onSubmit(data) {
-    console.log(data);
+    const { password } = data;
+    mutation.mutate({ password });
   }
 
   return (
@@ -26,7 +57,7 @@ const ResetPassword = () => {
       <div className="card bg-gray-800 shadow-xl rounded-lg p-6 w-full max-w-sm text-center">
         <h2 className="text-2xl font-bold text-white">Reset Password</h2>
 
-        {isSubmitted ? (
+        {mutation.isSuccess ? (
           <div className="mt-4">
             <CheckCircle className="text-green-500 w-12 h-12 mx-auto" />
             <p className="text-gray-300 mt-3">
@@ -79,10 +110,17 @@ const ResetPassword = () => {
 
             <button
               type="submit"
-              onClick={() => setIsSubmitted(false)}
+              disabled={mutation.isPending}
               className="btn btn-primary w-full mt-4"
             >
-              Reset Password
+              {mutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ...Please wait
+                </>
+              ) : (
+                "Reset password"
+              )}
             </button>
           </form>
         )}

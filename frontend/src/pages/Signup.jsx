@@ -1,15 +1,59 @@
 import { useState } from "react";
 import uploadImg from "../assets/uploadimg.png";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { Loader2 } from "lucide-react";
 
 function Signup() {
   const [profileImg, setProfileImg] = useState(null);
+  const navigate = useNavigate();
+
+  const mutation = useMutation({
+    mutationFn: async (signupData) => {
+      const formData = new FormData();
+
+      formData.append("firstName", signupData.firstName);
+      formData.append("lastName", signupData.lastName);
+      formData.append("email", signupData.email);
+      formData.append("password", signupData.password);
+      formData.append("age", signupData.age);
+      formData.append("gender", signupData.gender);
+      formData.append("avatar", signupData.avatar);
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/auth/signup`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log(response.data);
+      return response.data;
+    },
+
+    onSuccess: (response) => {
+      toast.success(
+        response.success ? response.message : "User registered successfully"
+      );
+      reset();
+      navigate("/login");
+    },
+
+    onError: () => {
+      toast.error("User registration failed.");
+    },
+  });
 
   const {
     register,
     handleSubmit,
     watch,
     setError,
+    reset,
     clearErrors,
     setValue,
     formState: { errors },
@@ -41,11 +85,12 @@ function Signup() {
   };
 
   function onSubmit(data) {
+    console.log(data);
     if (!data.avatar) {
       setError("avatar", { type: "manual", message: "Avatar is required" });
       return;
     }
-    console.log("form submitted", data);
+    mutation.mutate(data);
   }
 
   return (
@@ -197,8 +242,18 @@ function Signup() {
           )}
         </div>
 
-        <button type="submit" className="btn btn-primary w-full mt-3 shadow-lg">
-          Sign Up
+        <button
+          type="submit"
+          disabled={mutation.isPending}
+          className="btn btn-primary w-full mt-3 shadow-lg"
+        >
+          {mutation.isPending ? (
+            <>
+              <Loader2 className="animate-spin h-4 w-4 mr-2" /> ...Submitting
+            </>
+          ) : (
+            "Sign up"
+          )}
         </button>
 
         <p className="text-sm text-gray-500 mt-3 text-center">

@@ -1,10 +1,43 @@
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+  const navigate = useNavigate();
+
+  const mutation = useMutation({
+    mutationFn: async (loginData) => {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/auth/signin`,
+        loginData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return response.data;
+    },
+    onSuccess: (response) => {
+      toast.success(
+        response.success ? response.message : "User logged in successfully"
+      );
+      reset();
+      navigate("/");
+    },
+    onError: () => {
+      toast.error("Login failed");
+    },
+  });
+
   const {
     register,
     formState: { errors },
     handleSubmit,
+    reset,
   } = useForm({
     defaultValues: {
       email: "",
@@ -13,7 +46,7 @@ function Login() {
   });
 
   function onSubmit(data) {
-    console.log(data);
+    mutation.mutate(data);
   }
 
   return (
@@ -61,8 +94,19 @@ function Login() {
             </p>
           )}
         </div>
-        <button type="submit" className="btn btn-primary w-full mt-3 shadow-lg">
-          Login
+        <button
+          type="submit"
+          disabled={mutation.isPending}
+          className="btn btn-primary w-full mt-3 shadow-lg"
+        >
+          {mutation.isPending ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ...Please wait
+            </>
+          ) : (
+            "Login"
+          )}
         </button>
 
         <p className="text-sm text-gray-500 mt-3 text-center">
