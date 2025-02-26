@@ -1,4 +1,4 @@
-export const resetPasswordLinkEmail = (token) => {
+export const resetPasswordLinkEmail = (resetToken) => {
   return `<!DOCTYPE html>
     <html>
     <head>
@@ -35,7 +35,7 @@ export const resetPasswordLinkEmail = (token) => {
         <div class=\"container\">
             <h2>Reset Your Password</h2>
             <p>We received a request to reset your password. Click the button below to proceed:</p>
-            <a href=\`${process.env.CLIENT_URL}/reset-password/${token}\` class=\"btn\">Reset Password</a>
+            <a href=\`${process.env.CLIENT_URL}/reset-password/${resetToken}\` class=\"btn\">Reset Password</a>
             <p>If you didn't request this, please ignore this email.</p>
         </div>
     </body>

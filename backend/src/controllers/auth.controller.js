@@ -300,8 +300,17 @@ export async function forgotPassword(req, res) {
         message: "User not found",
       });
     }
+    await userModel.updateOne(
+      { email },
+      {
+        $unset: {
+          resetPasswordToken: undefined,
+          resetPasswordTokenExpiresAt: undefined,
+        },
+      }
+    );
 
-    const resetToken = crypto.randomBytes(20).toString("hex");
+    const resetToken = crypto.randomBytes(20).toString("hex").trim();
     const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000;
 
     user.resetPasswordToken = resetToken;
@@ -342,15 +351,17 @@ export async function resetPassword(req, res) {
     });
 
     const requiredBody = requiredUserData.safeParse(req.body);
-
+    console.log("Validation result:", requiredBody);
     if (!requiredBody.success) {
       return res.status(409).json({
         success: false,
         message: "Invalid inputs",
+        errors: requiredBody.error.issues,
       });
     }
 
-    const { token } = req.params;
+    const { resetToken } = req.params;
+
     const { password } = req.body;
 
     if (!password) {
@@ -361,7 +372,7 @@ export async function resetPassword(req, res) {
     }
 
     const user = await userModel.findOne({
-      resetPasswordToken: token,
+      resetPasswordToken: resetToken.trim(),
       resetPasswordTokenExpiresAt: {
         $gt: Date.now(),
       },
