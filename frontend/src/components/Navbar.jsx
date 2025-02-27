@@ -46,7 +46,6 @@ function Navbar() {
   });
 
   function handleLogout(data = {}) {
-    console.log(data);
     mutation.mutate(data);
   }
 

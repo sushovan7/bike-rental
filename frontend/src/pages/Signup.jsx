@@ -3,9 +3,9 @@ import uploadImg from "../assets/uploadimg.png";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
+import API from "../utils/axiosInstance";
 
 function Signup() {
   const [profileImg, setProfileImg] = useState(null);
@@ -23,15 +23,7 @@ function Signup() {
       formData.append("age", signupData.age);
       formData.append("gender", signupData.gender);
       formData.append("avatar", signupData.avatar);
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_BASE_URL}/auth/signup`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await API.post("/auth/signup", formData);
       return response.data;
     },
 

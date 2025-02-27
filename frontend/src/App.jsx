@@ -1,7 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import { Toaster } from "react-hot-toast";
-import useAuthCheck from "../hooks/useAuthCheck";
 import LoadingScreen from "./components/LoadingScreen";
 
 // Lazy load pages for better performance
@@ -17,8 +16,6 @@ const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Error = lazy(() => import("./pages/Error"));
 
 function App() {
-  useAuthCheck();
-
   return (
     <>
       <Toaster
