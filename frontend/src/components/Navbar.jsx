@@ -1,20 +1,18 @@
-import { useDispatch, useSelector } from "react-redux";
 import logo from "../assets/logo.webp";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-import { logout } from "../features/auth/authSlice";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../features/auth/authSlice";
 
 function Navbar() {
   const navigate = useNavigate();
-  const { token, user } = useSelector((state) => state.auth);
-  console.log(token, user);
-
-  const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
+  const { token, user } = useSelector((state) => state.auth);
+  const [open, setOpen] = useState(false);
   const mutation = useMutation({
     mutationKey: ["logout"],
     mutationFn: async (logoutData) => {
@@ -34,6 +32,15 @@ function Navbar() {
         dispatch(logout());
         toast.success("Logout successful!");
         navigate("/");
+      }
+    },
+    onError: (error) => {
+      if (error.response) {
+        const errorMessage =
+          error.response.data?.message || "User Logout failed.";
+        toast.error(errorMessage);
+      } else {
+        toast.error("Something went wrong. Please try again.");
       }
     },
   });
@@ -140,7 +147,7 @@ function Navbar() {
               onClick={() => setOpen(true)}
             >
               <div tabIndex={0} role="button" className="avatar">
-                <div className="ring-primary ring-offset-base-100 w-12 rounded-full ring ring-offset-2">
+                <div className="ring-primary cursor-pointer ring-offset-base-100 w-12 rounded-full ring ring-offset-2">
                   <img
                     className="object-cover"
                     src={user?.avatar || "https://via.placeholder.com/40"}

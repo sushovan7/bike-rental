@@ -4,7 +4,6 @@ import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
-
 import { useNavigate } from "react-router-dom";
 import { setToken } from "../features/auth/authSlice";
 
@@ -28,10 +27,9 @@ function Login() {
       return response.data;
     },
     onSuccess: (data) => {
-      console.log(data);
       if (data.success) {
-        dispatch(setToken({ token: data.accessToken, user: data.data }));
         toast.success("Login successful!");
+        dispatch(setToken({ token: data.accessToken, user: data.data }));
       }
       reset();
       navigate("/");
