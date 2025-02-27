@@ -172,7 +172,8 @@ export async function signin(req, res) {
       .cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "Strict",
+        sameSite: "strict",
+        maxAge: 15 * 24 * 60 * 60 * 1000,
       })
       .json({
         success: true,
@@ -201,20 +202,20 @@ export async function logout(req, res) {
       });
     }
 
-    user.refreshToken = undefined;
+    user.refreshToken = null;
     await user.save();
 
-    return res
-      .status(200)
-      .clearCookie("refreshToken", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // Use `true` in production
-        sameSite: "Strict", // To prevent CSRF
-      })
-      .json({
-        success: true,
-        message: "Logged out successfully",
-      });
+    res.cookie("refreshToken", "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      expires: new Date(0),
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Logged out successfully",
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -225,52 +226,54 @@ export async function logout(req, res) {
 
 export async function refreshAccessToken(req, res) {
   try {
-    const userId = req.user._id;
+    const incomingRefreshToken = req.cookies.refreshToken;
+    console.log(incomingRefreshToken);
+    if (!incomingRefreshToken) {
+      return res
+        .status(401)
+        .json({ success: false, message: "unauthorized request" });
+    }
 
-    const user = await userModel.findById(userId).select("-password");
+    let decodedToken;
+    try {
+      decodedToken = jwt.verify(
+        incomingRefreshToken,
+        process.env.REFRESH_TOKEN_SECRET
+      );
+    } catch (err) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Invalid refresh token" });
+    }
+
+    const user = await userModel.findById(decodedToken._id).select("-password");
     if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: "User not found",
-      });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
-    const refreshToken = user.refreshToken;
-
-    if (!refreshToken) {
-      return res.status(400).json({
-        success: false,
-        message: "No refresh token found",
-      });
+    if (incomingRefreshToken !== user?.refreshToken) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Refresh token is expired or used" });
     }
 
-    const decodedToken = jwt.verify(
-      refreshToken,
-      process.env.REFRESH_TOKEN_SECRET
-    );
+    const { accessToken, refreshToken } = generateToken(user._id);
 
-    if (!decodedToken) {
-      return res.status(400).json({
-        success: false,
-        message: "Unauthorized request",
+    return res
+      .status(200)
+      .cookir("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 15 * 24 * 60 * 60 * 1000,
+      })
+      .json({
+        success: true,
+        message: "Successfully refreshed accessToken",
+        accessToken,
       });
-    }
-
-    const accessToken = jwt.sign(
-      {
-        _id: userId,
-      },
-      process.env.ACCESS_TOKEN_SECRET,
-      {
-        expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
-      }
-    );
-
-    return res.status(200).json({
-      success: true,
-      message: "Successfully refreshed accessToken",
-      token: accessToken,
-    });
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -304,8 +307,8 @@ export async function forgotPassword(req, res) {
       { email },
       {
         $unset: {
-          resetPasswordToken: undefined,
-          resetPasswordTokenExpiresAt: undefined,
+          resetPasswordToken: null,
+          resetPasswordTokenExpiresAt: null,
         },
       }
     );
@@ -385,8 +388,8 @@ export async function resetPassword(req, res) {
       });
     }
     user.password = password;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordTokenExpiresAt = undefined;
+    user.resetPasswordToken = null;
+    user.resetPasswordTokenExpiresAt = null;
     await user.save();
 
     await transporter.sendMail({
