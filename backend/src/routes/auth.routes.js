@@ -12,7 +12,11 @@ import { auth } from "../middlewares/auth.middleware.js";
 
 export const authRouter = express.Router();
 
-authRouter.post("/signup", upload.single("avatar"), signup);
+authRouter.post(
+  "/signup",
+  upload.fields([{ name: "avatar", maxCount: 1 }]),
+  signup
+);
 authRouter.post("/signin", signin);
 authRouter.post("/forgot-password", forgotPassword);
 authRouter.post("/reset-password/:resetToken", resetPassword);

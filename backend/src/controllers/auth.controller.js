@@ -53,7 +53,7 @@ export async function signup(req, res) {
       });
     }
 
-    const avatar = req.file;
+    const avatar = req.files.avatar;
 
     if (!avatar) {
       return res.status(400).json({
@@ -62,7 +62,7 @@ export async function signup(req, res) {
       });
     }
 
-    const avatarLocalPath = avatar.path;
+    const avatarLocalPath = avatar[0]?.path;
 
     if (!avatarLocalPath) {
       return res.status(400).json({

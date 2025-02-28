@@ -6,24 +6,23 @@ export const imagekit = new ImageKit({
   urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
 });
 
-const MAX_FILE_SIZE_MB = 2;
-
-export async function uploadOnImagekit(file, fileName) {
+export async function uploadOnImageKit(files) {
   try {
-    if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-      throw new Error("File size exceeds 2MB. Please upload a smaller image.");
+    if (!files) {
+      throw new Error("No file provided for upload.");
     }
 
-    const result = await imagekit.upload({
-      file: file,
-      fileName: fileName,
-      isPublished: true,
-    });
-
-    console.log("Upload successful:", result);
-    return result;
+    const uploadPromises = files.map((file, index) =>
+      imagekit.upload({
+        file: file.buffer,
+        fileName: `product_image_${Date.now()}_${index}.jpg`,
+        folder: "/products",
+      })
+    );
+    const uploadedImages = await Promise.all(uploadPromises);
+    return uploadedImages.map((img) => img.url);
   } catch (error) {
-    console.error("ImageKit upload error:", error);
-    throw error;
+    console.error("ImageKit upload error:", error.message);
+    return { success: false, message: error.message };
   }
 }

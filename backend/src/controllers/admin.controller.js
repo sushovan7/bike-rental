@@ -1,7 +1,5 @@
 import jwt from "jsonwebtoken";
 
-import bcrypt from "bcrypt";
-
 export async function signin(req, res) {
   const { email, password } = req.body;
 
