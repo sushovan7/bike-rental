@@ -2,8 +2,8 @@ import { Routes, Route } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import LoadingScreen from "./components/LoadingScreen";
+import ProtectedRoutes from "./components/ProtectedRoutes";
 
-// Lazy load pages for better performance
 const RootLayout = lazy(() => import("./pages/RootLayout"));
 const Inventory = lazy(() => import("./pages/Inventory"));
 const About = lazy(() => import("./pages/About"));
@@ -13,6 +13,10 @@ const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const Notifications = lazy(() => import("./pages/Notifications"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Orders = lazy(() => import("./pages/Orders"));
+const Favourites = lazy(() => import("./pages/Favourites"));
 const Error = lazy(() => import("./pages/Error"));
 
 function App() {
@@ -39,6 +43,44 @@ function App() {
               path="reset-password/:resetToken"
               element={<ResetPassword />}
             />
+
+            {/* protected routes */}
+
+            <Route
+              path="notifications"
+              element={
+                <ProtectedRoutes>
+                  {" "}
+                  <Notifications />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="profile"
+              element={
+                <ProtectedRoutes>
+                  <Profile />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="orders"
+              element={
+                <ProtectedRoutes>
+                  <Orders />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="favourites"
+              element={
+                <ProtectedRoutes>
+                  <Favourites />
+                </ProtectedRoutes>
+              }
+            />
+
+            {/* error routes */}
             <Route path="*" element={<Error />} />
           </Route>
         </Routes>

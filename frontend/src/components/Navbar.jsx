@@ -1,14 +1,16 @@
 import logo from "../assets/logo.webp";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import toast from "react-hot-toast";
 
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../features/auth/authSlice";
+import { Bell, Heart, LogOut } from "lucide-react";
+import API from "../utils/axiosInstance";
 
 function Navbar() {
+  const [isKycVerified, setIsKycVerified] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { token, user } = useSelector((state) => state.auth);
@@ -16,15 +18,11 @@ function Navbar() {
   const mutation = useMutation({
     mutationKey: ["logout"],
     mutationFn: async (logoutData) => {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_BASE_URL}/auth/logout`,
-        logoutData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await API.post("/auth/logout", logoutData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return response.data;
     },
     onSuccess: (data) => {
@@ -138,39 +136,86 @@ function Navbar() {
         </ul>
       </div>
 
-      <div className="navbar-end">
+      <div className="navbar-end flex items-center gap-4">
         {token ? (
           <>
+            <Link to={"/notifications"} className="relative">
+              <div className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-[#5753E8] flex items-center justify-center text-xs">
+                1
+              </div>
+              <Bell size={24} />
+            </Link>
+            <Link to={"/favourites"} className="relative">
+              <div className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-[#5753E8] flex items-center justify-center text-xs">
+                2
+              </div>
+              <Heart size={24} />
+            </Link>
             <div
-              className="dropdown dropdown-end"
+              className="dropdown dropdown-end ml-2"
               onClick={() => setOpen(true)}
             >
               <div tabIndex={0} role="button" className="avatar">
-                <div className="ring-primary cursor-pointer ring-offset-base-100 w-12 rounded-full ring ring-offset-2">
-                  <img
-                    className="object-cover"
-                    src={user?.avatar || "https://via.placeholder.com/40"}
-                    alt="Avatar"
-                  />
-                </div>
+                {isKycVerified ? (
+                  <>
+                    <div className="avatar">
+                      <div className="avatar online ">
+                        <div className="w-12 rounded-full">
+                          <img
+                            src={
+                              user?.avatar ||
+                              "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="avatar offline">
+                      <div className="w-12 rounded-full">
+                        <img
+                          src={
+                            user?.avatar ||
+                            "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                          }
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
               {open && (
                 <ul
                   tabIndex={0}
-                  className="menu dropdown-content z-50 bg-base-100 rounded-lg shadow-lg w-48 p-2 mt-3"
+                  className="menu dropdown-content z-50 bg-base-100 rounded-lg shadow-lg w-48 p-4 mt-3"
                 >
                   <li>
-                    <a className="hover:bg-[#5753E8] rounded-lg">Profile</a>
+                    <Link
+                      to={"profile"}
+                      className="hover:bg-[#5753E8] rounded-lg"
+                    >
+                      Profile
+                    </Link>
                   </li>
                   <li>
-                    <a className="hover:bg-[#5753E8] rounded-lg">Settings</a>
+                    <Link
+                      to="/orders"
+                      className="hover:bg-[#5753E8] rounded-lg"
+                    >
+                      Orders
+                    </Link>
+                  </li>
+                  <li>
+                    <a className="hover:bg-[#5753E8] rounded-lg">Verify Kyc</a>
                   </li>
                   <li>
                     <button
                       className="hover:bg-[#5753E8] rounded-lg"
                       onClick={() => handleLogout()}
                     >
-                      Logout
+                      <LogOut size={18} className="mr-1" /> Logout
                     </button>
                   </li>
                 </ul>
