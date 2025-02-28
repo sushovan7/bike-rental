@@ -1,6 +1,10 @@
 import express from "express";
 import { authRouter } from "./auth.routes.js";
+import { imageKitAuthRouter } from "./imagekitAuth.routes.js";
+import { adminRouter } from "./admin.routes.js";
 
 export const rootRouter = express.Router();
 
 rootRouter.use("/auth", authRouter);
+rootRouter.use("/imagekit", imageKitAuthRouter);
+rootRouter.use("/admin", adminRouter);
