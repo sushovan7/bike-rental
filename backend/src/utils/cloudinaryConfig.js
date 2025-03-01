@@ -8,7 +8,6 @@ cloudinary.config({
 });
 
 export async function uploadOnCloudinary(localFilePath) {
-  console.log(localFilePath);
   try {
     if (!localFilePath) {
       return;
@@ -17,10 +16,21 @@ export async function uploadOnCloudinary(localFilePath) {
       resource_type: "auto",
     });
     fs.unlinkSync(localFilePath);
-    console.log("succes upload");
+
     return response;
   } catch (error) {
     console.log(error.stack);
     fs.unlinkSync(localFilePath);
+  }
+}
+
+export async function deleteFromCloudinary(publicId) {
+  try {
+    if (!publicId) {
+      return;
+    }
+    await cloudinary.uploader.destroy(publicId);
+  } catch (error) {
+    console.log(error.stack);
   }
 }

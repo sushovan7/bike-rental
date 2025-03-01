@@ -42,6 +42,18 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: undefined,
     },
+    addToFavourites: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Favourite",
+    },
+    orders: {
+      type: mongoose.Types.ObjectId,
+      ref: "Order",
+    },
+    notifications: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Notification",
+    },
   },
   { timestamps: true }
 );

@@ -22,6 +22,7 @@ const BikeColors = z.enum([
   "Maroon",
   "Matte Black",
 ]);
+
 const ABSOptions = z.enum(["ABS", "Non-ABS", "Dual-Channel ABS"]);
 const FrameSizes = z.enum(["Small", "Medium", "Large"]);
 const BikeCondition = z.enum(["New", "Perfect", "Good"]);
@@ -38,7 +39,7 @@ const productZodSchema = z
     category: BikeCategories,
     price: z.coerce.number().optional(),
     odometer: z.coerce.number().optional(),
-    color: BikeColors,
+    colors: z.array(BikeColors),
     gears: z.coerce.number().min(1, "At least 1 gear is required"),
     cc: z.coerce.number().optional(),
     weight: z.string().optional(),
@@ -76,3 +77,47 @@ export {
   FrameSizes,
   BikeCondition,
 };
+
+export const updateProductZodSchema = z
+  .object({
+    bikeName: z.string().min(1, "Bike name is required").optional(),
+    yearOfManufacture: z.coerce
+      .number()
+      .min(1900, "Year of manufacture is required")
+      .max(new Date().getFullYear(), "Invalid year")
+      .optional(),
+    model: z.string().min(1, "Model is required").optional(),
+    brandName: z.string().min(1, "Brand name is required").optional(),
+    category: BikeCategories.optional(),
+    price: z.coerce.number().optional(),
+    odometer: z.coerce.number().optional(),
+    colors: z.array(BikeColors).optional(),
+    gears: z.coerce.number().min(1, "At least 1 gear is required").optional(),
+    cc: z.coerce.number().optional(),
+    weight: z.string().optional(),
+    abs: ABSOptions.optional(),
+    frameSize: FrameSizes.optional(),
+    rentalPrice: z.coerce.number().optional(),
+    condition: BikeCondition.optional(),
+    description: z
+      .string()
+      .min(10, "Description should be at least 10 characters long")
+      .optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.condition === "New" && !data.price) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Price is required for new bikes",
+        path: ["price"],
+      });
+    }
+
+    if (data.condition !== "New" && !data.rentalPrice) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Rental price is required for used bikes",
+        path: ["rentalPrice"],
+      });
+    }
+  });
