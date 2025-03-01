@@ -99,6 +99,7 @@ export const updateProductZodSchema = z
     frameSize: FrameSizes.optional(),
     rentalPrice: z.coerce.number().optional(),
     condition: BikeCondition.optional(),
+    condition: BikeCondition,
     description: z
       .string()
       .min(10, "Description should be at least 10 characters long")

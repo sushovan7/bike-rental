@@ -68,4 +68,25 @@ productSchema.pre("validate", function (next) {
   }
   next();
 });
+
+productSchema.pre("findOneAndUpdate", async function (next) {
+  const update = this.getUpdate(); // Get the update payload
+
+  if (update.condition) {
+    if (update.condition === "New") {
+      if (!update.price) {
+        return next(new Error("Price is required for new bikes."));
+      }
+      update.rentalPrice = undefined;
+    } else {
+      if (!update.rentalPrice) {
+        return next(new Error("Rental price is required for used bikes."));
+      }
+      update.price = undefined;
+    }
+  }
+
+  next();
+});
+
 export const productModel = mongoose.model("Bike", productSchema);

@@ -143,7 +143,7 @@ export async function deleteProduct(req, res) {
         async (publicId) => await deleteFromCloudinary(publicId)
       )
     );
-    console.log(result);
+
     if (!result) {
       return res.status(400).json({
         success: false,
@@ -258,7 +258,7 @@ export async function updateProduct(req, res) {
         async (publicId) => await deleteFromCloudinary(publicId)
       )
     );
-    console.log(deleteResult);
+
     if (!deleteResult) {
       await session.abortTransaction();
       session.endSession();
@@ -312,7 +312,6 @@ export async function updateProduct(req, res) {
       req.files?.image4?.[0].path,
       req.files?.image5?.[0].path,
     ].filter((image) => image !== undefined);
-    console.log(imagesPath);
 
     if (imagesPath.length === 0) {
       await session.abortTransaction();
