@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import uploadImg from "../assets/uploadimg.png";
 import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { toast } from "react-hot-toast";
 
 const BikeCategories = [
   "Dirt",
@@ -33,33 +36,38 @@ const FrameSizes = ["Small", "Medium", "Large"];
 const BikeCondition = ["New", "Perfect", "Good"];
 
 function AddProduct() {
-  const [images, setImages] = useState(Array(5).fill(null));
+  const [image1, setImage1] = useState(null);
+  const [image2, setImage2] = useState(null);
+  const [image3, setImage3] = useState(null);
+  const [image4, setImage4] = useState(null);
+  const [image5, setImage5] = useState(null);
 
   const {
     register,
     watch,
+    reset,
     handleSubmit,
-    setValue,
+
     formState: { errors },
   } = useForm({
     defaultValues: {
       bikeName: "",
-      yearOfManufacture: "",
+      yearOfManufacture: 1990,
       model: "",
       brandName: "",
       category: "",
-      price: "",
-      odometer: "",
+      price: 0,
+      odometer: 0,
       gears: "",
-      cc: "",
+      cc: 0,
       abs: "",
       frameSize: "",
-      rentalPrice: "",
+      rentalPrice: 0,
       condition: "",
-      weight: "",
+      weight: 0,
       description: "",
       bestSeller: false,
-      images: [],
+      imahes: [],
       colors: [],
     },
   });
@@ -73,42 +81,80 @@ function AddProduct() {
   const isGearDisabled = category === "Electric";
   const isCCDisabled = category === "Electric";
 
-  function handleImageChange(index, file) {
-    if (!file) return;
-    const newImages = [...images];
-    newImages[index] = file;
-    setImages(newImages);
-    setValue(`images[${index}]`, file, { shouldValidate: true });
-  }
-
   function onSubmit(data) {
+    console.log(data);
+
     const formData = new FormData();
+
     formData.append("bikeName", data.bikeName);
-    formData.append("yearOfManufacture", Number(data.yearOfManufacture));
+    formData.append("yearOfManufacture", data.yearOfManufacture); //
     formData.append("model", data.model);
     formData.append("brandName", data.brandName);
     formData.append("category", data.category);
     formData.append("condition", data.condition);
-    formData.append("price", parseFloat(data.price).toFixed(2));
-    formData.append("rentalPrice", parseFloat(data.rentalPrice).toFixed(2));
-    formData.append("odometer", parseFloat(data.odometer).toFixed(2));
-    formData.append("gears", Number(data.gears));
-    formData.append("cc", parseFloat(data.cc).toFixed(2));
+
+    if (data.rentalPrice) {
+      formData.append("rentalPrice", parseFloat(data.rentalPrice).toFixed(2));
+    }
+    if (data.price) {
+      formData.append("price", parseFloat(data.price).toFixed(2));
+    }
+    formData.append("odometer", data.odometer);
+    formData.append("gears", data.gears);
+    formData.append("cc", data.cc);
     formData.append("abs", data.abs);
     formData.append("frameSize", data.frameSize);
-    formData.append("weight", parseFloat(data.weight).toFixed(2));
+    formData.append("weight", data.weight);
     formData.append("description", data.description);
-    formData.append("colors", data.colors);
-    formData.append("bestSeller", data.bestSeller);
-    data.images.forEach((image, index) => {
-      if (image) {
-        formData.append(`images[${index}]`, image);
-      }
+    data.colors.forEach((color, index) => {
+      formData.append(`colors[${index}]`, color);
     });
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
+    formData.append("bestSeller", data.bestSeller);
+
+    image1 && formData.append("image1", image1);
+    image1 && formData.append("image2", image2);
+    image1 && formData.append("image3", image3);
+    image1 && formData.append("image4", image4);
+    image1 && formData.append("image5", image5);
+
+    mutation.mutate(formData);
   }
+
+  const mutation = useMutation({
+    mutationFn: async (formData) => {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/product/add-product`,
+        formData,
+        {
+          headers: {
+            token: localStorage.getItem("token"),
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (data.success) {
+        toast.success("Product added successfully!");
+        reset();
+      } else {
+        toast.error(data.message || "Failed to add product.");
+      }
+    },
+    onError: (error) => {
+      if (error.response) {
+        const errorMessage =
+          error.response.data?.message ||
+          "Failed to add product. Please try again.";
+        toast.error(errorMessage);
+      } else if (error.request) {
+        toast.error("Network error. Please check your connection.");
+      } else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
+    },
+  });
 
   return (
     <div className="max-w-3xl mx-auto rounded-lg shadow-md p-6">
@@ -411,33 +457,71 @@ function AddProduct() {
         <div className="md:col-span-2">
           <span className="label-text font-semibold">Product Images:</span>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 mt-2">
-            {Array(5)
-              .fill(null)
-              .map((_, index) => (
-                <label
-                  key={index}
-                  htmlFor={`image${index}`}
-                  className="cursor-pointer"
-                >
-                  <img
-                    src={
-                      images[index]
-                        ? URL.createObjectURL(images[index])
-                        : uploadImg
-                    }
-                    alt="product_image"
-                    className="w-24 h-24 object-cover border rounded-lg"
-                  />
-                  <input
-                    type="file"
-                    onChange={(e) =>
-                      handleImageChange(index, e.target.files[0])
-                    }
-                    id={`image${index}`}
-                    hidden
-                  />
-                </label>
-              ))}
+            <label htmlFor="image1" className="cursor-pointer">
+              <img
+                src={image1 ? URL.createObjectURL(image1) : uploadImg}
+                alt="product_image"
+                className="w-24 h-24 object-cover border rounded-lg"
+              />
+              <input
+                type="file"
+                onChange={(e) => setImage1(e.target.files[0])}
+                id="image1"
+                hidden
+              />
+            </label>
+            <label htmlFor="image2" className="cursor-pointer">
+              <img
+                src={image2 ? URL.createObjectURL(image2) : uploadImg}
+                alt="product_image"
+                className="w-24 h-24 object-cover border rounded-lg"
+              />
+              <input
+                type="file"
+                onChange={(e) => setImage2(e.target.files[0])}
+                id="image2"
+                hidden
+              />
+            </label>
+            <label htmlFor="image3" className="cursor-pointer">
+              <img
+                src={image3 ? URL.createObjectURL(image3) : uploadImg}
+                alt="product_image"
+                className="w-24 h-24 object-cover border rounded-lg"
+              />
+              <input
+                type="file"
+                onChange={(e) => setImage3(e.target.files[0])}
+                id="image3"
+                hidden
+              />
+            </label>
+            <label htmlFor="image4" className="cursor-pointer">
+              <img
+                src={image4 ? URL.createObjectURL(image4) : uploadImg}
+                alt="product_image"
+                className="w-24 h-24 object-cover border rounded-lg"
+              />
+              <input
+                type="file"
+                onChange={(e) => setImage4(e.target.files[0])}
+                id="image4"
+                hidden
+              />
+            </label>
+            <label htmlFor="image5" className="cursor-pointer">
+              <img
+                src={image5 ? URL.createObjectURL(image5) : uploadImg}
+                alt="product_image"
+                className="w-24 h-24 object-cover border rounded-lg"
+              />
+              <input
+                type="file"
+                onChange={(e) => setImage5(e.target.files[0])}
+                id="image5"
+                hidden
+              />
+            </label>
           </div>
         </div>
 
@@ -448,6 +532,10 @@ function AddProduct() {
             <textarea
               {...register("description", {
                 required: "Description is required",
+                min: {
+                  value: 20,
+                  message: "Description should be at leatt 20 characters long",
+                },
               })}
               placeholder="Enter bike details"
               className="textarea textarea-bordered w-full"
