@@ -44,20 +44,52 @@ function Navbar() {
   }
 
   return (
-    <div className="navbar bg-base-100 flex items-center justify-between  border-b border-gray-400 shadow-sm">
-      <Link
-        to={"/"}
-        className=" flex gap-2 sm:text-2xl items-center  font-bold italic overflow-hidden"
-      >
-        <img
-          src={logo}
-          alt=""
-          width={40}
-          height={40}
-          className="rounded-full"
-        />
-        REELEIIC
-      </Link>
+    <div className="navbar bg-base-100 flex items-center justify-between border-b mb-5 border-gray-600 px-4">
+      <div className="flex items-center gap-2  w-[60vw]">
+        {" "}
+        <div className="dropdown">
+          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 6h16M4 12h8m-8 6h16"
+              />
+            </svg>
+          </div>
+          <ul
+            tabIndex={0}
+            className="menu menu-sm flex flex-col gap-4 dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2  pb-4 shadow-lg"
+          >
+            <Link to={"/"}>Dashboard</Link>
+            <Link to={"/add-product"}>Add Product</Link>
+            <Link to={"/product-display"}> All Products</Link>
+          </ul>
+        </div>
+        <div className="navbar-start">
+          <Link
+            to={"/"}
+            className=" flex gap-2 sm:text-2xl items-center  font-bold italic overflow-hidden"
+          >
+            <img
+              src={logo}
+              alt=""
+              width={40}
+              height={40}
+              className="rounded-full"
+            />
+            REELEIIC
+          </Link>
+        </div>
+      </div>
+
       {token ? (
         <>
           <button onClick={handleLogout} className="btn btn-primary">
@@ -65,9 +97,11 @@ function Navbar() {
           </button>
         </>
       ) : (
-        <Link to={"/login"} className="btn btn-primary">
-          Login
-        </Link>
+        <>
+          <Link to={"/login"} className="btn btn-primary">
+            Login
+          </Link>
+        </>
       )}
     </div>
   );

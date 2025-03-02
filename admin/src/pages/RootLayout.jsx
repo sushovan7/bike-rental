@@ -8,10 +8,10 @@ function RootLayout() {
     <div className="container mx-auto pt-4">
       <Navbar />
       <div className="flex gap-4 mt-4">
-        <div className="w-1/4 ">
+        <div className="md:w-[20vw] hidden   md:block">
           <Sidebar />
         </div>
-        <main className="w-3/4 px-4 py-4">
+        <main className="md:w-[80vw] w-full px-6 py-4 md:border-l border-gray-400">
           <Outlet />
         </main>
       </div>

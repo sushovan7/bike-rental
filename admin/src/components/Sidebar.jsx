@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 
 function Sidebar() {
   return (
-    <div className="px-4 border-r border-gray-400 min-h-[80vh] flex flex-col space-y-4 py-4">
+    <div className="px-4  min-h-[80vh] flex flex-col space-y-4 py-4">
       <NavItem to="/" label="Dashboard" />
       <NavItem to="/add-product" label="Add Product" />
       <NavItem to="/product-display" label="All Products" />
