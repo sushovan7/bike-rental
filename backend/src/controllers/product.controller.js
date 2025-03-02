@@ -61,12 +61,15 @@ export async function addProduct(req, res) {
       });
     }
 
+    console.log(imagesPath);
+
     const imagesUrl = await Promise.all(
       imagesPath.map(async (imagePath) => {
         const result = await uploadOnCloudinary(imagePath);
         return result.url;
       })
     );
+    console.log(imagesUrl);
 
     if (!imagesUrl) {
       return res.status(400).json({
@@ -74,27 +77,28 @@ export async function addProduct(req, res) {
         message: "failed to uplaod images",
       });
     }
-
+    console.log("hello");
     const product = await productModel.create({
       bikeName,
-      yearOfManufacture,
+      yearOfManufacture: parseInt(yearOfManufacture),
       model,
       brandName,
       category,
-      price,
-      odometer,
-      colors,
-      gears,
-      cc,
+      price: parseFloat(price).toFixed(2),
+      odometer: parseInt(odometer),
+      colors: colors,
+      gears: parseInt(gears),
+      cc: parseInt(cc),
       bestSeller,
-      weight,
+      weight: parseInt(weight),
       abs,
       frameSize,
-      rentalPrice,
+      rentalPrice: parseFloat(rentalPrice).toFixed(2),
       condition,
       description,
       images: imagesUrl,
     });
+    console.log("hi");
 
     return res.status(201).json({
       success: true,

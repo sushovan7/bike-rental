@@ -42,7 +42,7 @@ const productZodSchema = z
     colors: z.array(BikeColors),
     gears: z.coerce.number().min(1, "At least 1 gear is required"),
     cc: z.coerce.number().optional(),
-    weight: z.string().optional(),
+    weight: z.coerce.number().optional(),
     abs: ABSOptions,
     frameSize: FrameSizes.optional(),
     rentalPrice: z.coerce.number().optional(),
