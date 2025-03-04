@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { Loader2 } from "lucide-react";
 
 const BikeCategories = [
   "Dirt",
@@ -590,8 +591,16 @@ function AddProduct() {
         </div>
 
         {/* Submit Button */}
-        <button type="submit" className="btn btn-primary md:col-span-2">
-          Add Bike
+        <button
+          disabled={mutation.isPending}
+          type="submit"
+          className="btn btn-primary md:col-span-2"
+        >
+          {mutation.isPending ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            "Add Bike"
+          )}
         </button>
       </form>
     </div>

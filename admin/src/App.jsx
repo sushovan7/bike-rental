@@ -6,6 +6,7 @@ import ProductDisplay from "./pages/ProductDisplay";
 import AddProduct from "./pages/AddProduct";
 import Login from "./pages/Login";
 import { Toaster } from "react-hot-toast";
+import AllUsers from "./pages/AllUsers";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="add-product" element={<AddProduct />} />
           <Route path="product-display" element={<ProductDisplay />} />
+          <Route path="users" element={<AllUsers />} />
         </Route>
       </Routes>
     </>

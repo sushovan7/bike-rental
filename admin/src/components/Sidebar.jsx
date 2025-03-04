@@ -7,6 +7,7 @@ function Sidebar() {
       <NavItem to="/" label="Dashboard" />
       <NavItem to="/add-product" label="Add Product" />
       <NavItem to="/product-display" label="All Products" />
+      <NavItem to="/users" label="All Users" />
     </div>
   );
 }
