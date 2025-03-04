@@ -175,8 +175,6 @@ export async function updateUser(req, res) {
     const requiredData = z.object({
       firstName: z.string().optional(),
       LastName: z.string().optional(),
-      email: z.string().email().optional(),
-      password: z.string().optional(),
       age: z.coerce.number().optional(),
       gender: z.enum(["MALE", "FEMALE", "OTHERS"]).optional(),
     });
@@ -209,7 +207,7 @@ export async function updateUser(req, res) {
         .json({ success: false, message: "No filePath found" });
     }
 
-    const { firstName, lastName, email, password, age, gender } = req.body;
+    const { firstName, lastName, age, gender } = req.body;
 
     const { userId } = req.params;
 
@@ -258,9 +256,7 @@ export async function updateUser(req, res) {
         {
           firstName,
           lastName,
-          email,
-          password,
-          age,
+          age: parseInt(age),
           gender,
           avatar: avatarUrl,
         },
