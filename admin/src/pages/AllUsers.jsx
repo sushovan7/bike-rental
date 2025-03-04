@@ -13,12 +13,21 @@ function AllUsers() {
   const [avatar, setAvatar] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
 
-  const { register, handleSubmit, reset } = useForm({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+    clearErrors,
+    setError,
+    setValue,
+  } = useForm({
     defaultValues: {
       firstName: "",
       lastName: "",
       age: "",
       gender: "",
+      image: null,
     },
   });
 
@@ -158,6 +167,19 @@ function AllUsers() {
     return <span>Error: {error.message}</span>;
   }
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    if (!file) {
+      setError("avatar", { type: "manual", message: "Avatar is required" });
+    } else {
+      console.log(file);
+      setAvatar(file);
+      setValue("avatar", file, { shouldValidate: true });
+      clearErrors("avatar");
+    }
+  };
+
   function onSubmit(data) {
     const id = data._id;
     const formData = new FormData();
@@ -259,7 +281,7 @@ function AllUsers() {
                                       height={80}
                                       width={80}
                                       src={
-                                        avatar && avatar !== null
+                                        avatar
                                           ? URL.createObjectURL(avatar)
                                           : uploadImg
                                       }
@@ -267,14 +289,16 @@ function AllUsers() {
                                     />
                                     <input
                                       type="file"
-                                      onChange={(e) => {
-                                        const file = e.target.files?.[0];
-                                        setAvatar(file || null);
-                                      }}
+                                      onChange={handleImageChange}
                                       className="file-input file-input-bordered hidden w-full"
                                       accept="image/*"
                                     />
                                   </label>
+                                  {errors.avatar && (
+                                    <p className="text-xs text-red-500">
+                                      {errors.avatar.message}
+                                    </p>
+                                  )}
                                 </div>
 
                                 <div className="form-control mb-2">
