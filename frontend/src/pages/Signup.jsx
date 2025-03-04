@@ -73,7 +73,7 @@ function Signup() {
     const file = e.target.files[0];
 
     if (!file) {
-      setError("avatar", { type: "manua;", message: "Avatar is required" });
+      setError("avatar", { type: "manual", message: "Avatar is required" });
     } else {
       console.log(file);
       setProfileImg(file);
