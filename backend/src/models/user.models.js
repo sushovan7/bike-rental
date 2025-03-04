@@ -42,18 +42,36 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: undefined,
     },
-    addToFavourites: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Favourite",
-    },
-    orders: {
-      type: mongoose.Types.ObjectId,
-      ref: "Order",
-    },
-    notifications: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Notification",
-    },
+    addToFavourites: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Favourite",
+      },
+    ],
+    orders: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Order",
+      },
+    ],
+    notifications: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Notification",
+      },
+    ],
+    reviews: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Review",
+      },
+    ],
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comment",
+      },
+    ],
   },
   { timestamps: true }
 );

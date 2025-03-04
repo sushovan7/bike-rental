@@ -50,6 +50,18 @@ const productSchema = new mongoose.Schema(
     condition: { type: String, enum: BikeCondition, required: true },
     images: { type: [String], required: true },
     description: { type: String, required: true },
+    reviews: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Review",
+      },
+    ],
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comment",
+      },
+    ],
   },
   { timestamps: true }
 );
