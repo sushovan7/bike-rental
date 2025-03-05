@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 const redeemSchema = new mongoose.Schema(
   {
     userId: {

@@ -69,7 +69,7 @@ export async function addProduct(req, res) {
         return result.url;
       })
     );
-    console.log(imagesUrl);
+    console.log("hello", imagesUrl);
 
     if (!imagesUrl) {
       return res.status(400).json({

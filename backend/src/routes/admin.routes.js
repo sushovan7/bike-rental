@@ -15,11 +15,11 @@ adminRouter.post("/signin", signin);
 adminRouter.post("/logout", adminAuth, logout);
 
 adminRouter.get("/users", adminAuth, getAllUsers);
-adminRouter.get("/user/:userId", adminAuth, getUser);
+adminRouter.get("/users/:userId", adminAuth, getUser);
 adminRouter.put(
-  "/update-user/:userId",
+  "/users/:userId",
   adminAuth,
   upload.fields([{ name: "avatar", maxCount: 1 }]),
   updateUser
 );
-adminRouter.delete("/delete-user/:userId", adminAuth, deleteUser);
+adminRouter.delete("/users/:userId", adminAuth, deleteUser);
