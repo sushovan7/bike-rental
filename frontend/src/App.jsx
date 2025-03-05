@@ -3,8 +3,8 @@ import { lazy, Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import LoadingScreen from "./components/LoadingScreen";
 import ProtectedRoutes from "./components/ProtectedRoutes";
-import ProductDetails from "./pages/ProductDetails";
 
+const ProductDetails = lazy(() => import("./pages/ProductDetails"));
 const RootLayout = lazy(() => import("./pages/RootLayout"));
 const Inventory = lazy(() => import("./pages/Inventory"));
 const About = lazy(() => import("./pages/About"));
@@ -81,7 +81,7 @@ function App() {
               }
             />
             <Route
-              path="product-details"
+              path="product-details/:productId"
               element={
                 <ProtectedRoutes>
                   <ProductDetails />

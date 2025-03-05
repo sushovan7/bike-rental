@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
-import API from "../utils/axiosInstance";
+import axios from "axios";
 
 function Signup() {
   const [profileImg, setProfileImg] = useState(null);
@@ -23,7 +23,10 @@ function Signup() {
       formData.append("age", signupData.age);
       formData.append("gender", signupData.gender);
       formData.append("avatar", signupData.avatar);
-      const response = await API.post("/auth/signup", formData);
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/auth/signup`,
+        formData
+      );
       return response.data;
     },
 

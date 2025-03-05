@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../features/auth/authSlice";
 import { Bell, Heart, LogOut } from "lucide-react";
-import API from "../utils/axiosInstance";
+import axios from "axios";
 
 function Navbar() {
   const [isKycVerified, setIsKycVerified] = useState(true);
@@ -18,11 +18,15 @@ function Navbar() {
   const mutation = useMutation({
     mutationKey: ["logout"],
     mutationFn: async (logoutData) => {
-      const response = await API.post("/auth/logout", logoutData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/auth/logout`,
+        logoutData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       return response.data;
     },
     onSuccess: (data) => {

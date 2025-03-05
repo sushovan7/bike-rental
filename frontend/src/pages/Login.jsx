@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setToken } from "../features/auth/authSlice";
-import API from "../utils/axiosInstance";
+import axios from "axios";
 
 function Login() {
   const navigate = useNavigate();
@@ -15,7 +15,10 @@ function Login() {
   const mutation = useMutation({
     mutationKey: ["login"],
     mutationFn: async (loginData) => {
-      const response = await API.post(`/auth/signin`, loginData);
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/auth/signin`,
+        loginData
+      );
 
       return response.data;
     },
