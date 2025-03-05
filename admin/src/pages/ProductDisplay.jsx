@@ -5,11 +5,10 @@ import { toast } from "react-hot-toast";
 import { useState } from "react";
 
 function ProductDisplay() {
-  const [selectedIds, setSelectedIds] = useState([]);
-  console.log(selectedIds);
+  const [deleteIds, setDeleteIds] = useState(null);
+
   const queryClient = useQueryClient();
 
-  // for fetching all products
   const fetchProducts = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -35,7 +34,6 @@ function ProductDisplay() {
     queryFn: fetchProducts,
   });
 
-  // for deleting individual product
   const deleteProduct = async (id) => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -47,7 +45,7 @@ function ProductDisplay() {
     }
 
     const response = await axios.delete(
-      `${import.meta.env.VITE_BACKEND_BASE_URL}/product/delete-product/${id}`,
+      `${import.meta.env.VITE_BACKEND_BASE_URL}/product/products/${id}`,
       { headers: { token } }
     );
 
@@ -73,21 +71,9 @@ function ProductDisplay() {
   });
 
   const handleDeleteProduct = (id) => {
+    setDeleteIds(id);
     mutation.mutate(id);
   };
-
-  function handleSelectedProduct(id) {
-    if (selectedIds.includes(id)) {
-      const updatedIds = selectedIds.filter((itemId) => id !== itemId);
-      setSelectedIds(updatedIds);
-    } else {
-      setSelectedIds([...selectedIds, id]);
-    }
-  }
-
-  // for deleting multiple products
-
-  function handleMultipleDelete() {}
 
   if (isPending) {
     return <span>Loading...</span>;
@@ -101,18 +87,12 @@ function ProductDisplay() {
     <div className="overflow-x-auto">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold mb-4">All Bikes</h2>
-        {selectedIds.length > 1 && (
-          <button onClick={handleMultipleDelete} className="btn btn-error">
-            Delete {selectedIds.length} products
-          </button>
-        )}
       </div>
 
       <div className="w-full overflow-x-auto">
         <table className="table min-w-[800px]">
           <thead>
             <tr>
-              <th></th>
               <th>Name</th>
               <th>Model</th>
               <th>Condition</th>
@@ -124,15 +104,6 @@ function ProductDisplay() {
             {data?.products && data.products.length > 0
               ? data.products.map((product) => (
                   <tr key={product._id}>
-                    <th>
-                      <label>
-                        <input
-                          onChange={() => handleSelectedProduct(product._id)}
-                          type="checkbox"
-                          className="checkbox"
-                        />
-                      </label>
-                    </th>
                     <td>
                       <div className="flex items-center gap-3">
                         <div className="avatar">
@@ -178,12 +149,12 @@ function ProductDisplay() {
                         <div className="tooltip" data-tip="delete">
                           <button
                             disabled={
-                              mutation.isPending || selectedIds.length > 1
+                              mutation.isPending && deleteIds === product._id
                             }
                             onClick={() => handleDeleteProduct(product._id)}
                             className="btn px-2 btn-error btn-sm"
                           >
-                            {mutation.isPending ? (
+                            {mutation.isPending && deleteIds === product._id ? (
                               <Loader2 className="mr-1 h-4 w-4 animate-spin" />
                             ) : (
                               <Trash2 size={20} />

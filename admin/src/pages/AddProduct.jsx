@@ -53,19 +53,19 @@ function AddProduct() {
   } = useForm({
     defaultValues: {
       bikeName: "",
-      yearOfManufacture: 1990,
+      yearOfManufacture: "",
       model: "",
       brandName: "",
       category: "",
-      price: 0,
-      odometer: 0,
+      price: "",
+      odometer: "",
       gears: "",
-      cc: 0,
+      cc: "",
       abs: "",
       frameSize: "",
       rentalPrice: 0,
       condition: "",
-      weight: 0,
+      weight: "",
       description: "",
       bestSeller: false,
       imahes: [],
@@ -124,7 +124,7 @@ function AddProduct() {
   const mutation = useMutation({
     mutationFn: async (formData) => {
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_BASE_URL}/product/add-product`,
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/product/products`,
         formData,
         {
           headers: {
