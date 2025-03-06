@@ -42,6 +42,7 @@ const productSchema = new mongoose.Schema(
     brandName: { type: String, required: true },
     category: { type: String, enum: BikeCategories, required: true },
     price: { type: Number },
+    discountPrice: { type: Number },
     odometer: { type: Number },
     colors: { type: [String], enum: BikeColors, required: true },
     gears: { type: Number, required: true },
@@ -51,6 +52,7 @@ const productSchema = new mongoose.Schema(
     abs: { type: String, enum: ABSOptions, required: true },
     frameSize: { type: String, enum: FrameSizes },
     rentalPrice: { type: Number },
+    discountRentalPrice: { type: Number },
     condition: { type: String, enum: BikeCondition, required: true },
     images: { type: [String], required: true },
     description: { type: String, required: true },
@@ -76,11 +78,13 @@ productSchema.pre("validate", function (next) {
       return next(new Error("Price is required for new bikes."));
     }
     this.rentalPrice = undefined;
+    this.discountRentalPrice = undefined;
   } else {
     if (!this.rentalPrice) {
       return next(new Error("Rental price is required for used bikes."));
     }
     this.price = undefined;
+    this.discountPrice = undefined;
   }
   next();
 });
@@ -94,11 +98,13 @@ productSchema.pre("findOneAndUpdate", async function (next) {
         return next(new Error("Price is required for new bikes."));
       }
       update.rentalPrice = undefined;
+      update.discountRentalPrice = undefined;
     } else {
       if (!update.rentalPrice) {
         return next(new Error("Rental price is required for used bikes."));
       }
       update.price = undefined;
+      update.discountPrice = undefined;
     }
   }
 

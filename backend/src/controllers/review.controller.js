@@ -102,9 +102,11 @@ export async function getBikeReview(req, res) {
       });
     }
 
-    const bikeReviews = await reviewModel.find({
-      bikeId: bikeId,
-    });
+    const bikeReviews = await reviewModel
+      .find({
+        bikeId: bikeId,
+      })
+      .populate("userId", "firstName");
 
     return res.status(200).json({
       success: true,
@@ -148,7 +150,7 @@ export async function deleteReview(req, res) {
     if (review.userId.toString() !== userId.toString()) {
       return res.status(403).json({
         success: false,
-        message: "Forbidden: You cannot delete this review",
+        message: "Forbidden: You cannot delete other review",
       });
     }
 

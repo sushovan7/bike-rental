@@ -38,6 +38,12 @@ const productZodSchema = z
     brandName: z.string().min(1, "Brand name is required"),
     category: BikeCategories,
     price: z.coerce.number().optional(),
+    discountPrice: z.coerce
+      .number()
+      .optional()
+      .refine((val) => val === undefined || !isNaN(val), {
+        message: "Discount price must be a valid number",
+      }),
     odometer: z.coerce.number().optional(),
     colors: z.array(BikeColors),
     gears: z.coerce.number().min(1, "At least 1 gear is required"),
@@ -46,6 +52,12 @@ const productZodSchema = z
     abs: ABSOptions,
     frameSize: FrameSizes.optional(),
     rentalPrice: z.coerce.number().optional(),
+    discountRentalPrice: z.coerce
+      .number()
+      .optional()
+      .refine((val) => val === undefined || !isNaN(val), {
+        message: "Discount rental price must be a valid number",
+      }),
     condition: BikeCondition,
     description: z
       .string()

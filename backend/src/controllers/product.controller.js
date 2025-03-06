@@ -33,6 +33,7 @@ export async function addProduct(req, res) {
       brandName,
       category,
       price,
+      discountPrice,
       odometer,
       colors,
       gears,
@@ -42,6 +43,7 @@ export async function addProduct(req, res) {
       abs,
       frameSize,
       rentalPrice,
+      discountRentalPrice,
       condition,
       description,
     } = req.body;
@@ -61,8 +63,6 @@ export async function addProduct(req, res) {
       });
     }
 
-    console.log(imagesPath);
-
     const imagesUrl = await Promise.all(
       imagesPath.map(async (imagePath) => {
         const result = await uploadOnCloudinary(imagePath);
@@ -77,7 +77,7 @@ export async function addProduct(req, res) {
         message: "failed to uplaod images",
       });
     }
-    console.log("hello");
+
     const product = await productModel.create({
       bikeName,
       yearOfManufacture: parseInt(yearOfManufacture),
@@ -85,6 +85,9 @@ export async function addProduct(req, res) {
       brandName,
       category,
       price: parseFloat(price).toFixed(2),
+      discountPrice: isNaN(parseFloat(discountPrice))
+        ? undefined
+        : parseFloat(discountPrice).toFixed(2),
       odometer: parseInt(odometer),
       colors: colors,
       gears: parseInt(gears),
@@ -94,11 +97,13 @@ export async function addProduct(req, res) {
       abs,
       frameSize,
       rentalPrice: parseFloat(rentalPrice).toFixed(2),
+      discountRentalPrice: isNaN(parseFloat(discountRentalPrice))
+        ? undefined
+        : parseFloat(discountRentalPrice).toFixed(2),
       condition,
       description,
       images: imagesUrl,
     });
-    console.log("hi");
 
     return res.status(201).json({
       success: true,
@@ -109,6 +114,7 @@ export async function addProduct(req, res) {
     return res.status(500).json({
       success: false,
       message: "Failed to add product",
+      error: error.message,
     });
   }
 }

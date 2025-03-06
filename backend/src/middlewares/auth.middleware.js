@@ -4,7 +4,7 @@ import { userModel } from "../models/user.models.js";
 export async function auth(req, res, next) {
   try {
     const token = req.headers["authorization"]?.replace("Bearer ", "");
-    console.log(token);
+
     if (!token) {
       return res.status(401).json({
         success: false,
