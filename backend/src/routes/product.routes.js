@@ -8,6 +8,7 @@ import {
 } from "../controllers/product.controller.js";
 import { adminAuth } from "../middlewares/adminAuth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
+import { auth } from "../middlewares/auth.middleware.js";
 
 export const productRouter = express.Router();
 
@@ -25,7 +26,6 @@ productRouter.post(
 );
 
 productRouter.delete("/products/:productId", adminAuth, deleteProduct);
-productRouter.get("/products", adminAuth, allProducts);
 productRouter.get("/products/:productId", adminAuth, singleProduct);
 productRouter.put(
   "/products/:productId",
@@ -39,3 +39,7 @@ productRouter.put(
   ]),
   updateProduct
 );
+productRouter.get("/products", adminAuth, allProducts);
+// user
+productRouter.get("/user/products", allProducts);
+productRouter.get("/user/products/:productId", auth, singleProduct);

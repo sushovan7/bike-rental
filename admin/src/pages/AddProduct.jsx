@@ -14,6 +14,10 @@ const BikeCategories = [
   "Sports",
   "Scooter",
   "Electric",
+  "Naked",
+  "Touring",
+  "Cafe Racers",
+  "Off-Road",
 ];
 
 const BikeColors = [
@@ -58,12 +62,14 @@ function AddProduct() {
       brandName: "",
       category: "",
       price: "",
+      discountPrice: "",
       odometer: "",
       gears: "",
       cc: "",
       abs: "",
       frameSize: "",
-      rentalPrice: 0,
+      rentalPrice: "",
+      discountRentalPrice: "",
       condition: "",
       weight: "",
       description: "",
@@ -99,6 +105,18 @@ function AddProduct() {
     }
     if (data.price) {
       formData.append("price", parseFloat(data.price).toFixed(2));
+    }
+    if (data.discountPrice) {
+      formData.append(
+        "discountPrice",
+        parseFloat(data.discountPrice).toFixed(2)
+      );
+    }
+    if (data.discountRentalPrice) {
+      formData.append(
+        "discountRentalPrice",
+        parseFloat(data.discountRentalPrice).toFixed(2)
+      );
     }
     formData.append("odometer", data.odometer);
     formData.append("gears", data.gears);
@@ -316,6 +334,23 @@ function AddProduct() {
             <p className="text-red-500 text-xs mt-1">{errors.price.message}</p>
           )}
         </div>
+        <div>
+          <label className="form-control w-full">
+            <span className="label-text">Price Discount</span>
+            <input
+              {...register("discountPrice")}
+              type="number"
+              disabled={isPriceDisabled}
+              placeholder="Enter price"
+              className="input input-bordered w-full"
+            />
+          </label>
+          {errors.discountPrice && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.discountPrice.message}
+            </p>
+          )}
+        </div>
 
         {/* Rental Price */}
         <div>
@@ -334,6 +369,24 @@ function AddProduct() {
           {errors.rentalPrice && (
             <p className="text-red-500 text-xs mt-1">
               {errors.rentalPrice.message}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className="form-control w-full">
+            <span className="label-text">Rental Discount</span>
+            <input
+              {...register("discountRentalPrice")}
+              type="number"
+              disabled={isRentalDisabled}
+              placeholder="Enter rental price"
+              className="input input-bordered w-full"
+            />
+          </label>
+          {errors.discountRentalPrice && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.discountRentalPrice.message}
             </p>
           )}
         </div>

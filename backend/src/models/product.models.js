@@ -8,6 +8,10 @@ const BikeCategories = [
   "Sports",
   "Scooter",
   "Electric",
+  "Naked",
+  "Touring",
+  "Cafe Racers",
+  "Off-Road",
 ];
 
 const BikeColors = [
