@@ -18,6 +18,7 @@ import { useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import ReviewSection from "../components/ReviewSection";
 
 function ProductDetails() {
   const { token } = useSelector((state) => state.auth);
@@ -66,7 +67,6 @@ function ProductDetails() {
 
   const responsive = {
     superLargeDesktop: {
-      // the naming can be any, depends on you.
       breakpoint: { max: 4000, min: 3000 },
       items: 1,
     },
@@ -176,14 +176,37 @@ function ProductDetails() {
         <div className="md:col-span-1">
           <div className="p-6 rounded-lg border border-gray-600 shadow">
             <h2 className="text-xl font-semibold mb-4">Our Price</h2>
-            <p className="text-2xl font-bold text-primary">
-              Rs{" "}
-              {data.product.price ? (
-                data.product.price
-              ) : (
-                <span>{data.product.rentalPrice}/day</span>
-              )}
-            </p>
+            <div className="text-2xl font-bold text-primary">
+              <p>
+                {data.product.condition === "New" ? (
+                  <span>
+                    Rs{" "}
+                    {data.product.discountPrice
+                      ? data.product.price - data.product.discountPrice
+                      : data.product.price}
+                  </span>
+                ) : (
+                  <span>
+                    Rs{" "}
+                    {data.product.discountRentalPrice
+                      ? data.product.rentalPrice -
+                        data.product.discountRentalPrice
+                      : data.product.rentalPrice}
+                    /day
+                  </span>
+                )}
+              </p>
+              <p className="text-sm line-through decoration-2 decoration-gray-900 text-gray-300">
+                {data.product.condition === "New" &&
+                  data.product.discountPrice && (
+                    <span>Rs {data.product.price}</span>
+                  )}
+                {data.product.condition !== "New" &&
+                  data.product.discountRentalPrice && (
+                    <span>Rs {data.product.rentalPrice}</span>
+                  )}
+              </p>
+            </div>
             <button className="mt-4 text-lg cursor-pointer w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-dark transitionn font-bold">
               {data.product.condition === "New" ? "Buy Bike" : "Rent Bike"}
             </button>
@@ -316,6 +339,8 @@ function ProductDetails() {
           </div>
         </div>
       </div>
+
+      <ReviewSection productId={productId} />
     </div>
   );
 }

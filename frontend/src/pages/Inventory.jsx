@@ -2,8 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import Card from "../components/Card";
+import { useState } from "react";
 
 function Inventory() {
+  const [currentPage, setCurrentPage] = useState(1);
+
   async function fetchProducts() {
     try {
       const response = await axios.get(
@@ -34,6 +37,20 @@ function Inventory() {
     return <div>{error.message}</div>;
   }
 
+  const itemPerPage = 10;
+  const startIndex = (currentPage - 1) * itemPerPage;
+  const endIndex = startIndex + itemPerPage;
+  const noOfPages = Math.ceil(data.products.length / itemPerPage);
+
+  const productsToDisplay = data.products.slice(startIndex, endIndex);
+
+  function handleNext() {
+    if (currentPage < noOfPages) setCurrentPage((prev) => prev + 1);
+  }
+  function handlePrevious() {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  }
+
   return (
     <div className="p-4">
       <div className="flex flex-col md:flex-row gap-4 mb-8">
@@ -62,18 +79,24 @@ function Inventory() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {data.products &&
-          data.products.length > 0 &&
-          data.products.map((product) => (
-            <Card key={product._id} product={product} />
-          ))}
+        {productsToDisplay.map((product) => (
+          <Card key={product._id} product={product} />
+        ))}
       </div>
       <div className="join mt-6 flex gap-4">
-        <button className="join-item  btn btn-outline btn-primary">
+        <button
+          disabled={currentPage === 1}
+          onClick={handlePrevious}
+          className="join-item  btn btn-outline btn-primary"
+        >
           <ArrowLeft />
         </button>
-        <button className="join-item btn btn-primary">Page 22</button>
-        <button className="join-item btn btn-outline btn-primary">
+        <p className="join-item btn btn-primary">Page {currentPage}</p>
+        <button
+          disabled={currentPage === noOfPages}
+          onClick={handleNext}
+          className="join-item btn btn-outline btn-primary"
+        >
           <ArrowRight />
         </button>
       </div>

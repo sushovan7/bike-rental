@@ -22,13 +22,9 @@ function Card({ product }) {
         <h1 className="text-white text-lg font-bold">{product.bikeName}</h1>
         <div className="flex gap-2 mb-2">
           {product.condition === "New" ? (
-            <div className="badge badge-sm badge-success text-sm">
-              {product.condition}
-            </div>
+            <div className="badge badge-sm badge-success text-sm">New</div>
           ) : (
-            <div className="badge badge-sm badge-info text-sm">
-              {product.condition}
-            </div>
+            <div className="badge badge-sm badge-info text-sm">Used</div>
           )}
           {product.category === "Electric" ? (
             <div className="badge badge-sm bg-accent bg-opacity-50">
