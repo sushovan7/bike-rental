@@ -2,7 +2,6 @@ import logo from "../assets/logo.webp";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../features/auth/authSlice";
@@ -10,11 +9,16 @@ import { Bell, Heart, LogOut } from "lucide-react";
 import axios from "axios";
 
 function Navbar() {
-  const [isKycVerified, setIsKycVerified] = useState(true);
+  const [favouriteCount, setFavouriteCount] = useState(() => {
+    const favouriteData = localStorage.getItem("favouriteData");
+    return favouriteData ? JSON.parse(favouriteData).length : 0;
+  });
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { token, user } = useSelector((state) => state.auth);
-  const [open, setOpen] = useState(false);
+  const isKycVerified = user?.kycVerified || false;
+
   const mutation = useMutation({
     mutationKey: ["logout"],
     mutationFn: async (logoutData) => {
@@ -44,6 +48,9 @@ function Navbar() {
       } else {
         toast.error("Something went wrong. Please try again.");
       }
+
+      dispatch(logout());
+      navigate("/");
     },
   });
 
@@ -151,79 +158,65 @@ function Navbar() {
             </Link>
             <Link to={"/favourites"} className="relative">
               <div className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-[#5753E8] flex items-center justify-center text-xs">
-                2
+                {favouriteCount}
               </div>
               <Heart size={24} />
             </Link>
-            <div
-              className="dropdown dropdown-end ml-2"
-              onClick={() => setOpen(true)}
-            >
+            <div className="dropdown dropdown-end ml-2">
               <div tabIndex={0} role="button" className="avatar">
                 {isKycVerified ? (
-                  <>
-                    <div className="avatar">
-                      <div className="avatar online ">
-                        <div className="w-12 rounded-full">
-                          <img
-                            src={
-                              user?.avatar ||
-                              "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                            }
-                          />
-                        </div>
-                      </div>
+                  <div className="avatar online">
+                    <div className="w-12 rounded-full">
+                      <img
+                        src={
+                          user?.avatar ||
+                          "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                        }
+                      />
                     </div>
-                  </>
+                  </div>
                 ) : (
-                  <>
-                    <div className="avatar offline">
-                      <div className="w-12 rounded-full">
-                        <img
-                          src={
-                            user?.avatar ||
-                            "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                          }
-                        />
-                      </div>
+                  <div className="avatar offline">
+                    <div className="w-12 rounded-full">
+                      <img
+                        src={
+                          user?.avatar ||
+                          "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                        }
+                      />
                     </div>
-                  </>
+                  </div>
                 )}
               </div>
-              {open && (
-                <ul
-                  tabIndex={0}
-                  className="menu dropdown-content z-50 bg-base-100 rounded-lg shadow-lg w-48 p-4 mt-3"
-                >
-                  <li>
-                    <Link
-                      to={"profile"}
-                      className="hover:bg-[#5753E8] rounded-lg"
-                    >
-                      Profile
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/orders"
-                      className="hover:bg-[#5753E8] rounded-lg"
-                    >
-                      Orders
-                    </Link>
-                  </li>
-                  <li>
-                    <a className="hover:bg-[#5753E8] rounded-lg">Verify Kyc</a>
-                  </li>
-                  <li>
-                    <button
-                      className="hover:bg-[#5753E8] rounded-lg"
-                      onClick={() => handleLogout()}
-                    >
-                      <LogOut size={18} className="mr-1" /> Logout
-                    </button>
-                  </li>
-                </ul>
-              )}
+              <ul
+                tabIndex={0}
+                className="menu dropdown-content z-50 bg-base-100 rounded-lg shadow-lg w-48 p-4 mt-3"
+              >
+                <li>
+                  <Link
+                    to={"profile"}
+                    className="hover:bg-[#5753E8] rounded-lg"
+                  >
+                    Profile
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/orders" className="hover:bg-[#5753E8] rounded-lg">
+                    Orders
+                  </Link>
+                </li>
+                <li>
+                  <a className="hover:bg-[#5753E8] rounded-lg">Verify Kyc</a>
+                </li>
+                <li>
+                  <button
+                    className="hover:bg-[#5753E8] rounded-lg"
+                    onClick={() => handleLogout()}
+                  >
+                    <LogOut size={18} className="mr-1" /> Logout
+                  </button>
+                </li>
+              </ul>
             </div>
           </>
         ) : (
