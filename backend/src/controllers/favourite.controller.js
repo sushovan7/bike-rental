@@ -117,6 +117,7 @@ export async function removeFromFavourite(req, res) {
     }
 
     const product = await productModel.findById(productId);
+
     if (!product) {
       return res.status(404).json({
         success: false,
@@ -152,7 +153,7 @@ export async function removeFromFavourite(req, res) {
         .json({ message: "Product not found in favourites" });
     }
 
-    res
+    return res
       .status(200)
       .json({ success: true, message: "Product removed from favourites" });
   } catch (error) {
