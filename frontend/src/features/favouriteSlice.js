@@ -16,7 +16,6 @@ export const favouriteSlice = createSlice({
       );
     },
     removeFavourite: (state, action) => {
-      console.log("Payload received:", action.payload);
       state.favouriteData = state.favouriteData.filter(
         (item) => item.bikeId !== action.payload.productId
       );

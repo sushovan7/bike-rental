@@ -2,22 +2,19 @@ import logo from "../assets/logo.webp";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../features/auth/authSlice";
 import { Bell, Heart, LogOut } from "lucide-react";
 import axios from "axios";
 
 function Navbar() {
-  const [favouriteCount, setFavouriteCount] = useState(() => {
-    const favouriteData = localStorage.getItem("favouriteData");
-    return favouriteData ? JSON.parse(favouriteData).length : 0;
-  });
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { token, user } = useSelector((state) => state.auth);
   const isKycVerified = user?.kycVerified || false;
+  const favouriteCount = useSelector(
+    (state) => state.favourite.favouriteData.length
+  );
 
   const mutation = useMutation({
     mutationKey: ["logout"],
@@ -165,7 +162,7 @@ function Navbar() {
             <div className="dropdown dropdown-end ml-2">
               <div tabIndex={0} role="button" className="avatar">
                 {isKycVerified ? (
-                  <div className="avatar online">
+                  <div className="avatar relative online">
                     <div className="w-12 rounded-full">
                       <img
                         src={
@@ -206,7 +203,9 @@ function Navbar() {
                   </Link>
                 </li>
                 <li>
-                  <a className="hover:bg-[#5753E8] rounded-lg">Verify Kyc</a>
+                  <Link to="/kyc" className="hover:bg-[#5753E8] rounded-lg">
+                    Verify Kyc
+                  </Link>
                 </li>
                 <li>
                   <button

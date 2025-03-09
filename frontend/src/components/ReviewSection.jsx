@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { Edit2, Loader2, Trash2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 function ProductDetails({ productId }) {
   const queryClient = useQueryClient();
@@ -116,8 +117,6 @@ function ProductDetails({ productId }) {
     deleteReviewMutation.mutate(id);
   }
 
-  function handleReviewEdit() {}
-
   return (
     <div className="container mx-auto p-4 flex flex-col">
       <div className="mt-8">
@@ -195,14 +194,18 @@ function ProductDetails({ productId }) {
                   <p className="font-semibold">{review.userId?.firstName}</p>
                   {review.userId?._id === user._id && (
                     <div className="flex gap-4 items-center absolute right-2">
-                      <button onClick={handleReviewEdit}>
-                        <Edit2 size={20} className="cursor-pointer" />
-                      </button>
+                      <Link
+                        to={`/product-details/${productId}/review/${review._id}`}
+                        className="btn btn-primary btn-sm"
+                      >
+                        <Edit2 size={15} className="cursor-pointer " />
+                      </Link>
+
                       <button
                         onClick={() => handleReviewDelete(review._id)}
-                        className="cursor-pointer"
+                        className="cursor-pointer btn btn-error btn-sm"
                       >
-                        <Trash2 />
+                        <Trash2 size={15} />
                       </button>
                     </div>
                   )}

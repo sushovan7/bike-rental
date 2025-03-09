@@ -3,8 +3,10 @@ import { lazy, Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import LoadingScreen from "./components/LoadingScreen";
 import ProtectedRoutes from "./components/ProtectedRoutes";
+import EditReview from "./pages/EditReview";
 
 const ProductDetails = lazy(() => import("./pages/ProductDetails"));
+const KycForm = lazy(() => import("./pages/KycForm"));
 const RootLayout = lazy(() => import("./pages/RootLayout"));
 const Inventory = lazy(() => import("./pages/Inventory"));
 const About = lazy(() => import("./pages/About"));
@@ -24,7 +26,7 @@ function App() {
   return (
     <>
       <Toaster
-        position="top-right"
+        position="top-center"
         reverseOrder={false}
         toastOptions={{
           duration: 3000,
@@ -85,6 +87,23 @@ function App() {
               element={
                 <ProtectedRoutes>
                   <ProductDetails />
+                </ProtectedRoutes>
+              }
+            />
+
+            <Route
+              path="product-details/:productId/review/:reviewId"
+              element={
+                <ProtectedRoutes>
+                  <EditReview />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="kyc"
+              element={
+                <ProtectedRoutes>
+                  <KycForm />
                 </ProtectedRoutes>
               }
             />

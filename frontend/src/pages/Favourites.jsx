@@ -3,9 +3,16 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import FavouriteCard from "../components/FavouriteCard";
+import { useEffect } from "react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 function Favourites() {
   const { token } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   const { data, isError, error, isPending } = useQuery({
     queryKey: ["getFavourites"],
     queryFn: async () => {
@@ -43,6 +50,15 @@ function Favourites() {
               <FavouriteCard key={product._id} product={product} />
             ))
           : "No favourites has been added till now"}
+      </div>
+      <div className="join mt-6 flex gap-4">
+        <button className="join-item  btn btn-outline btn-primary">
+          <ArrowLeft />
+        </button>
+        <p className="join-item btn btn-primary">Page 5</p>
+        <button className="join-item btn btn-outline btn-primary">
+          <ArrowRight />
+        </button>
       </div>
     </div>
   );

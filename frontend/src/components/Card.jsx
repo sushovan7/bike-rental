@@ -4,13 +4,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
-import { useState } from "react";
 import { createFavourite } from "../features/favouriteSlice";
 
 function Card({ product }) {
-  const [isFavourite, setIsFavourite] = useState(false);
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
+  const favouriteData = useSelector((state) => state.favourite.favouriteData);
+  const isFavourite = favouriteData.some((fav) => fav.bikeId === product._id);
+
   const queryClient = useQueryClient();
 
   const createFavouriteMutation = useMutation({
@@ -32,7 +33,7 @@ function Card({ product }) {
     onSuccess: (data) => {
       if (data.success) {
         toast.success(data.message || "Added to favourite successfully");
-        setIsFavourite(true);
+
         queryClient.invalidateQueries(["getFavourites"]);
         dispatch(createFavourite({ favouriteData: data.favourite }));
       }

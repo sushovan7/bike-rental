@@ -19,10 +19,15 @@ import { useQuery } from "@tanstack/react-query";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import ReviewSection from "../components/ReviewSection";
+import { useEffect } from "react";
 
 function ProductDetails() {
   const { token } = useSelector((state) => state.auth);
   const { productId } = useParams();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   async function fetchProducts() {
     try {

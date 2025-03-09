@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 const notifications = [
   { id: 1, date: "2025-02-28", message: "Your appointment is confirmed." },
   { id: 2, date: "2025-02-27", message: "New course added to your LMS." },
@@ -5,6 +7,9 @@ const notifications = [
 ];
 
 const NotificationPage = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
   return (
     <div className="max-w-lg mx-auto p-6 bg-base-200 rounded-xl shadow-lg mt-10">
       <h2 className="text-xl font-bold mb-4">Notifications</h2>

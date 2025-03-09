@@ -2,10 +2,54 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import Card from "../components/Card";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function Inventory() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchInput, setSearchInput] = useState("");
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [filterType, setFilterType] = useState("");
+  const [filterByCategory, setFilterByCategory] = useState("");
+
+  const { data, isError, error, isPending } = useQuery({
+    queryKey: ["products"],
+    queryFn: fetchProducts,
+  });
+
+  useEffect(() => {
+    if (!data?.products) return;
+
+    let filtered = data.products;
+    console.log(filtered);
+
+    if (searchInput.length >= 3) {
+      filtered = filtered.filter(
+        (product) =>
+          product.bikeName.toLowerCase().includes(searchInput.toLowerCase()) ||
+          product.brandName.toLowerCase().includes(searchInput.toLowerCase())
+      );
+    }
+
+    if (filterType) {
+      filtered = filtered.filter((product) =>
+        filterType === "New"
+          ? product.condition === "New"
+          : product.condition !== "New"
+      );
+    }
+
+    if (filterByCategory) {
+      filtered = filtered.filter(
+        (product) => product.category === filterByCategory
+      );
+    }
+
+    setFilteredProducts(filtered);
+  }, [searchInput, data, filterType, filterByCategory]);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   async function fetchProducts() {
     try {
@@ -24,11 +68,6 @@ function Inventory() {
     }
   }
 
-  const { data, isError, error, isPending } = useQuery({
-    queryKey: ["products"],
-    queryFn: fetchProducts,
-  });
-
   if (isPending) {
     return <div>...Loading</div>;
   }
@@ -41,8 +80,9 @@ function Inventory() {
   const startIndex = (currentPage - 1) * itemPerPage;
   const endIndex = startIndex + itemPerPage;
   const noOfPages = Math.ceil(data.products.length / itemPerPage);
+  const productsToDisplay = filteredProducts.slice(startIndex, endIndex);
 
-  const productsToDisplay = data.products.slice(startIndex, endIndex);
+  // filter code
 
   function handleNext() {
     if (currentPage < noOfPages) setCurrentPage((prev) => prev + 1);
@@ -57,31 +97,48 @@ function Inventory() {
         {/* Search Bar */}
         <input
           type="text"
+          value={searchInput}
           placeholder="Search products..."
+          onChange={(e) => setSearchInput(e.target.value)}
           className="input input-bordered w-full md:w-64"
         />
 
-        <select className="select select-bordered w-full md:w-48">
-          <option disabled selected>
-            Filter by New
-          </option>
-          <option>New</option>
-          <option>For rent</option>
+        <select
+          value={filterType}
+          onChange={(e) => setFilterType(e.target.value)}
+          className="select select-bordered w-full md:w-48"
+        >
+          <option value="">Filter by Condition</option>
+          <option value="New">New</option>
+          <option value="Used">Used</option>
         </select>
 
-        <select className="select select-bordered w-full md:w-48">
-          <option disabled selected>
-            Filter by Price
-          </option>
-          <option>Low to High</option>
-          <option>High to Low</option>
+        <select
+          value={filterByCategory}
+          onChange={(e) => setFilterByCategory(e.target.value)}
+          className="select select-bordered w-full md:w-48"
+        >
+          <option value="">Filter by Category</option>
+          <option value="Dirt">Dirt</option>
+          <option value="Adventure">Adventure</option>
+          <option value="Street">Street</option>
+          <option value="Cruiser">Cruiser</option>
+          <option value="Sports">Sports</option>
+          <option value="Scooter">Scooter</option>
+          <option value="Electric">Electric</option>
+          <option value="Naked">Naked</option>
+          <option value="Touring">Touring</option>
+          <option value="Cafe Racers">Cafe Racers</option>
+          <option value="Off-Road">Off-Road</option>
         </select>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {productsToDisplay.map((product) => (
-          <Card key={product._id} product={product} />
-        ))}
+        {productsToDisplay && productsToDisplay.length > 1
+          ? productsToDisplay.map((product) => (
+              <Card key={product._id} product={product} />
+            ))
+          : "No Products Available"}
       </div>
       <div className="join mt-6 flex gap-4">
         <button

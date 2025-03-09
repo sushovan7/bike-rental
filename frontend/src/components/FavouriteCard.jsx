@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { removeFavourite } from "../features/favouriteSlice";
 
 function FavouriteCard({ product }) {
+  console.log(product);
   const [isFavourite, setIsFavourite] = useState(true);
   const { token } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -48,7 +49,6 @@ function FavouriteCard({ product }) {
   });
 
   function deleteFromfavoutite() {
-    console.log("Deleting product with ID:", product.bikeId._id);
     deleteFavouriteMutation.mutate(product.bikeId._id);
   }
 
