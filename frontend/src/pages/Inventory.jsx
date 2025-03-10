@@ -17,17 +17,21 @@ function Inventory() {
   });
 
   useEffect(() => {
-    if (!data?.products) return;
+    if (!data?.products || !Array.isArray(data.products)) return;
 
     let filtered = data.products;
-    console.log(filtered);
+    console.log("Original products:", filtered);
 
-    if (searchInput.length >= 3) {
+    const trimmedSearch = searchInput.trim().toLowerCase();
+
+    if (trimmedSearch.length >= 3) {
       filtered = filtered.filter(
         (product) =>
-          product.bikeName.toLowerCase().includes(searchInput.toLowerCase()) ||
-          product.brandName.toLowerCase().includes(searchInput.toLowerCase())
+          product.bikeName.toLowerCase().includes(trimmedSearch) ||
+          product.brandName.toLowerCase().includes(trimmedSearch)
       );
+    } else {
+      filtered = data.products; // Reset if search is cleared
     }
 
     if (filterType) {
@@ -44,6 +48,7 @@ function Inventory() {
       );
     }
 
+    console.log("Filtered products:", filtered);
     setFilteredProducts(filtered);
   }, [searchInput, data, filterType, filterByCategory]);
 
@@ -134,7 +139,7 @@ function Inventory() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {productsToDisplay && productsToDisplay.length > 1
+        {productsToDisplay && productsToDisplay.length > 0
           ? productsToDisplay.map((product) => (
               <Card key={product._id} product={product} />
             ))

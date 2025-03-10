@@ -95,44 +95,42 @@ function Signup() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="shadow-xl w-full max-w-md flex flex-col gap-6 items-center justify-center px-6 py-10 rounded-2xl bg-white"
-      >
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-          Create Your Account
-        </h2>
-
-        <div className="w-full">
-          <input
-            {...register("firstName", { required: "Firstname is required" })}
-            type="text"
-            placeholder="First Name"
-            className="input input-bordered w-full rounded-lg shadow-md"
-          />
-          {errors.firstName && (
-            <p className="text-red-500 text-xs mt-1">
-              {errors.firstName.message}
-            </p>
-          )}
+    <div className="max-w-lg mx-auto p-6 bg-base-200 rounded-xl shadow-lg mt-10">
+      <h2 className="text-xl font-bold mb-4">Create Your Account</h2>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-gray-400">First Name</label>
+            <input
+              {...register("firstName", { required: "Firstname is required" })}
+              type="text"
+              placeholder="First Name"
+              className="input input-bordered w-full"
+            />
+            {errors.firstName && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.firstName.message}
+              </p>
+            )}
+          </div>
+          <div>
+            <label className="block text-gray-400">Last Name</label>
+            <input
+              {...register("lastName", { required: "Lastname is required" })}
+              type="text"
+              placeholder="Last Name"
+              className="input input-bordered w-full"
+            />
+            {errors.lastName && (
+              <p className="text-xs mt-1 text-red-500">
+                {errors.lastName.message}
+              </p>
+            )}
+          </div>
         </div>
 
-        <div className="w-full">
-          {" "}
-          <input
-            {...register("lastName", { required: "Lastname is required" })}
-            type="text"
-            placeholder="Last Name"
-            className="input input-bordered w-full rounded-lg shadow-md"
-          />
-          {errors.lastName && (
-            <p className="text-xs mt-1 text-red-500">
-              {errors.lastName.message}
-            </p>
-          )}
-        </div>
-        <div className="w-full">
+        <div>
+          <label className="block text-gray-400">Email</label>
           <input
             {...register("email", {
               required: "Email is required",
@@ -143,24 +141,26 @@ function Signup() {
             })}
             type="email"
             placeholder="Email"
-            className="input input-bordered w-full rounded-lg shadow-md"
+            className="input input-bordered w-full"
           />
           {errors.email && (
             <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>
           )}
         </div>
-        <div className="w-full">
+
+        <div>
+          <label className="block text-gray-400">Password</label>
           <input
             type="password"
             {...register("password", {
               required: "Password is required",
               minLength: {
                 value: 8,
-                message: "Password must be atleast 8 characters long",
+                message: "Password must be at least 8 characters long",
               },
             })}
             placeholder="Password"
-            className="input input-bordered w-full rounded-lg shadow-md"
+            className="input input-bordered w-full"
           />
           {errors.password && (
             <p className="text-red-500 text-xs mt-1">
@@ -168,48 +168,50 @@ function Signup() {
             </p>
           )}
         </div>
-        <div className="w-full">
-          {" "}
+
+        <div>
+          <label className="block text-gray-400">Age</label>
           <input
             {...register("age", { required: "Age is required" })}
             type="number"
             placeholder="Age"
-            className="input input-bordered w-full rounded-lg shadow-md"
+            className="input input-bordered w-full"
           />
           {errors.age && (
             <p className="text-xs text-red-500">{errors.age.message}</p>
           )}
         </div>
 
-        <div className="flex w-full flex-col ">
-          <div className="flex w-full justify-around gap-4">
-            <label className="label cursor-pointer">
-              <span className="label-text text-[#1D232A]">Male</span>
+        <div>
+          <label className="block text-gray-400">Gender</label>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="label-text">Male</span>
               <input
                 {...register("gender", { required: "Gender is required" })}
                 type="radio"
                 value="MALE"
                 className="radio radio-primary"
               />
-            </label>
-            <label className="label cursor-pointer">
-              <span className="label-text text-[#1D232A]">Female</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="label-text">Female</span>
               <input
                 {...register("gender", { required: "Gender is required" })}
                 type="radio"
                 value="FEMALE"
                 className="radio radio-primary"
               />
-            </label>
-            <label className="label cursor-pointer">
-              <span className="label-text text-[#1D232A]">Other</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="label-text">Other</span>
               <input
                 {...register("gender", { required: "Gender is required" })}
                 type="radio"
                 value="OTHERS"
                 className="radio radio-primary"
               />
-            </label>
+            </div>
           </div>
           {errors.gender && (
             <p className="text-xs text-red-500">{errors.gender.message}</p>
@@ -221,8 +223,8 @@ function Signup() {
           )}
         </div>
 
-        <div className="flex flex-col w-full items-center">
-          <h1 className="label text-[#1D232A]  mb-3">Profile Image:</h1>
+        <div className="flex flex-col items-center">
+          <label className="block text-gray-400 mb-3">Profile Image</label>
           <label htmlFor="image1" className="cursor-pointer overflow-hidden">
             <img
               width="70px"
@@ -230,7 +232,7 @@ function Signup() {
               src={profileImg ? URL.createObjectURL(profileImg) : uploadImg}
               alt="profile_image"
               className="object-cover"
-            />{" "}
+            />
             <input
               type="file"
               id="image1"
@@ -246,7 +248,7 @@ function Signup() {
         <button
           type="submit"
           disabled={mutation.isPending}
-          className="btn btn-primary w-full mt-3 shadow-lg"
+          className="btn btn-primary w-full mt-4"
         >
           {mutation.isPending ? (
             <>
