@@ -1,7 +1,12 @@
 import express from "express";
-import { createKyc } from "../controllers/kyc.controller.js";
+import {
+  createKyc,
+  getKycRequest,
+  getSinglKycRequest,
+} from "../controllers/kyc.controller.js";
 import { auth } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
+import { adminAuth } from "../middlewares/adminAuth.middleware.js";
 
 export const kycRouter = express.Router();
 
@@ -15,3 +20,6 @@ kycRouter.post(
   ]),
   createKyc
 );
+
+kycRouter.get("/kyc-request", adminAuth, getKycRequest);
+kycRouter.get("/kyc-request/:requestId", adminAuth, getSinglKycRequest);

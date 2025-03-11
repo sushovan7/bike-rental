@@ -94,3 +94,56 @@ export async function createKyc(req, res) {
     });
   }
 }
+
+export async function getKycRequest(req, res) {
+  try {
+    const kycRequest = await kycModel
+      .find({})
+      .populate("userId", "avatar firstName lastName");
+
+    if (kycRequest.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No KYC requests found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      kycRequest,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch KYC requests",
+      error: error.message,
+    });
+  }
+}
+
+export async function getSinglKycRequest(req, res) {
+  try {
+    const { requestId } = req.params;
+    const kycRequest = await kycModel
+      .findById(requestId)
+      .populate("userId", "avatar firstName lastName");
+
+    if (!kycRequest) {
+      return res.status(404).json({
+        success: false,
+        message: "No KYC requests found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      kycRequest,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch KYC requests",
+      error: error.message,
+    });
+  }
+}
