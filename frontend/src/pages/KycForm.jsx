@@ -1,17 +1,25 @@
 import { useForm } from "react-hook-form";
 import kycUploadImg from "../assets/kyc-upload.jpeg";
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 const KycForm = () => {
   const [frontImg, setFrontImg] = useState(null);
   const [backImg, setBackImg] = useState(null);
-  const [liscenseImg, setliscenseImg] = useState(null);
+  const [licenseImg, setlicenseImg] = useState(null);
+  const { token, user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
 
   const {
     register,
     formState: { errors },
     handleSubmit,
-    setValue,
+    reset,
   } = useForm({
     defaultValues: {
       fullName: "",
@@ -27,8 +35,8 @@ const KycForm = () => {
       idNumber: "",
       frontImg: "",
       backImg: "",
-      liscenseImg: "",
-      liscenseNumber: "",
+      licenseImg: "",
+      licenseNumber: "",
       issuingDate: "",
       issuingAuthority: "",
       emergencyContactName: "",
@@ -39,18 +47,16 @@ const KycForm = () => {
     },
   });
 
-  const handleImageChange = (e, setImage, fieldName) => {
+  const handleImageChange = (e, setImage) => {
     const file = e.target.files[0];
     if (file) {
       setImage(file);
-      setValue(fieldName, file);
     }
   };
 
   function onSubmit(data) {
-    console.log(data);
     const formData = new FormData();
-
+    formData.append("userId", user._id);
     formData.append("fullName", data.fullName);
     formData.append("dateOfBirth", data.dateOfBirth);
     formData.append("gender", data.gender);
@@ -62,9 +68,7 @@ const KycForm = () => {
     formData.append("zipCode", data.zipCode);
     formData.append("identificationType", data.identificationType);
     formData.append("idNumber", data.idNumber);
-    formData.append("liscenseNumber", data.liscenseNumber);
-    formData.append("issuingDate", data.issuingDate);
-    formData.append("issuingAuthority", data.issuingAuthority);
+    formData.append("licenseNumber", data.licenseNumber);
     formData.append("emergencyContactName", data.emergencyContactName);
     formData.append("emergencyRelation", data.emergencyRelation);
     formData.append("emergencyPhoneNumber", data.emergencyPhoneNumber);
@@ -75,19 +79,48 @@ const KycForm = () => {
     );
     if (frontImg) formData.append("frontImg", frontImg);
     if (backImg) formData.append("backImg", backImg);
-    if (liscenseImg) formData.append("licenseImg", liscenseImg);
-
-    for (const [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
+    if (licenseImg) formData.append("licenseImg", licenseImg);
+    kycMutation.mutate(formData);
   }
+
+  const kycMutation = useMutation({
+    mutationFn: async (formData) => {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/kyc/create-kyc`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (data.success) {
+        toast.success("Kyc request sent successfully! wait for admin approval");
+        reset(), setFrontImg(null), setBackImg(null), setlicenseImg(null);
+        navigate("/");
+      }
+    },
+
+    onError: (error) => {
+      if (error.response) {
+        const errorMessage =
+          error.response.data?.message || "Kyc request sent failed.";
+        toast.error(errorMessage);
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
+    },
+  });
 
   return (
     <div className="flex justify-center items-center min-h-screen p-4 bg-base-100">
       <div className="card w-full max-w-2xl p-6 md:p-8 shadow-lg bg-base-200 rounded-lg">
         <h2 className="text-2xl font-bold mb-8 text-center">KYC Form</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-          {/* Personal Information Section */}
           <div className="space-y-6">
             <h3 className="text-xl font-semibold">Personal Information</h3>
             <div className="grid gap-6 md:grid-cols-2">
@@ -134,9 +167,9 @@ const KycForm = () => {
                   {...register("gender", { required: "Gender is required" })}
                   className="select select-bordered w-full"
                 >
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
+                  <option value="MALE">Male</option>
+                  <option value="FEMALE">Female</option>
+                  <option value="OTHER">Other</option>
                 </select>
                 {errors.gender && (
                   <p className="text-red-500 mt-1 text-sm">
@@ -183,7 +216,6 @@ const KycForm = () => {
             </div>
           </div>
 
-          {/* Address Details Section */}
           <div className="space-y-6">
             <h3 className="text-xl font-semibold">Address Details</h3>
             <div className="grid gap-6 md:grid-cols-2">
@@ -252,7 +284,6 @@ const KycForm = () => {
             </div>
           </div>
 
-          {/* Identity Verification Section */}
           <div className="space-y-6">
             <h3 className="text-xl font-semibold">Identity Verification</h3>
             <div className="grid gap-6 md:grid-cols-2">
@@ -264,9 +295,8 @@ const KycForm = () => {
                   })}
                   className="select select-bordered w-full"
                 >
-                  <option value="passport">Passport</option>
-                  <option value="driverLicense">Driver&apos;s License</option>
-                  <option value="nationalID">National ID</option>
+                  <option value="PASSPORT">Passport</option>
+                  <option value="NATIONAL_ID">National ID</option>
                 </select>
                 {errors.identificationType && (
                   <p className="text-red-500 mt-1 text-sm">
@@ -311,9 +341,6 @@ const KycForm = () => {
                         className="object-cover w-full h-40 rounded-lg"
                       />
                       <input
-                        {...register("frontImg", {
-                          required: "Front Image is required",
-                        })}
                         type="file"
                         onChange={(e) =>
                           handleImageChange(e, setFrontImg, "frontImg")
@@ -334,9 +361,6 @@ const KycForm = () => {
                         className="object-cover w-full h-40 rounded-lg"
                       />
                       <input
-                        {...register("backImg", {
-                          required: "Back Image is required",
-                        })}
                         type="file"
                         onChange={(e) =>
                           handleImageChange(e, setBackImg, "backImg")
@@ -351,53 +375,22 @@ const KycForm = () => {
             </div>
           </div>
 
-          {/* Driving License Section */}
           <div className="space-y-6">
             <h3 className="text-xl font-semibold">Driving License</h3>
             <div className="grid gap-6 md:grid-cols-2">
               <div>
                 {" "}
                 <input
-                  {...register("liscenseNumber", {
-                    required: "Liscense number is required",
+                  {...register("licenseNumber", {
+                    required: "License number is required",
                   })}
                   type="text"
                   placeholder="Driving License Number"
                   className="input input-bordered w-full"
                 />
-                {errors.liscenseNumber && (
+                {errors.licenseNumber && (
                   <p className="text-red-500 mt-1 text-sm">
-                    {errors.liscenseNumber.message}
-                  </p>
-                )}
-              </div>
-              <div>
-                {" "}
-                <input
-                  {...register("issuingAuthority", {
-                    required: "Issuing authority is required",
-                  })}
-                  type="text"
-                  placeholder="Issuing Authority"
-                  className="input input-bordered w-full"
-                />
-                {errors.issuingAuthority && (
-                  <p className="text-red-500 mt-1 text-sm">
-                    {errors.issuingAuthority.message}
-                  </p>
-                )}
-              </div>
-              <div>
-                <input
-                  {...register("issuingDate", {
-                    required: "Issuing Date is required",
-                  })}
-                  type="date"
-                  className="input input-bordered w-full"
-                />
-                {errors.issuingDate && (
-                  <p className="text-red-500 mt-1 text-sm">
-                    {errors.issuingDate.message}
+                    {errors.licenseNumber.message}
                   </p>
                 )}
               </div>
@@ -406,20 +399,15 @@ const KycForm = () => {
               <label htmlFor="license-img" className="cursor-pointer">
                 <img
                   src={
-                    liscenseImg
-                      ? URL.createObjectURL(liscenseImg)
-                      : kycUploadImg
+                    licenseImg ? URL.createObjectURL(licenseImg) : kycUploadImg
                   }
                   alt="license_image"
                   className="object-cover w-full h-40 rounded-lg"
                 />
                 <input
-                  {...register("liscenseImg", {
-                    required: "Liscense Image is required",
-                  })}
                   type="file"
                   onChange={(e) =>
-                    handleImageChange(e, setliscenseImg, "liscense")
+                    handleImageChange(e, setlicenseImg, "license")
                   }
                   id="license-img"
                   className="hidden"
@@ -521,9 +509,16 @@ const KycForm = () => {
             </div>
           </div>
 
-          {/* Submit Button */}
-          <button type="submit" className="btn btn-primary w-full">
-            Submit
+          <button
+            disabled={kycMutation.isPending}
+            type="submit"
+            className="btn btn-primary w-full"
+          >
+            {kycMutation.isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              "   Submit"
+            )}
           </button>
         </form>
       </div>

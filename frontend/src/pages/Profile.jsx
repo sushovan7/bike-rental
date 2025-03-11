@@ -56,7 +56,7 @@ const Profile = () => {
 
       const response = await axios.put(
         `${import.meta.env.VITE_BACKEND_BASE_URL}/user/users/${user._id}`,
-        formData, // ✅ Use formData
+        formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -72,8 +72,8 @@ const Profile = () => {
       if (data.success) {
         toast.success("User updated successfully!");
         reset();
-        setProfileImg(null); // ✅ Reset profile image
-        dispatch(updateUser(data.updatedUser)); // ✅ Correct dispatch
+        setProfileImg(null);
+        dispatch(updateUser(data.updatedUser));
         navigate("/");
       }
     },
