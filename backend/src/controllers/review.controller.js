@@ -245,7 +245,7 @@ export async function updateReview(req, res) {
     );
 
     return res.status(200).json({
-      success: false,
+      success: true,
       message: "Review updated successfully",
       updatedReview,
     });
