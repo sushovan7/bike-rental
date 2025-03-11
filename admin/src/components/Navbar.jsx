@@ -71,6 +71,8 @@ function Navbar() {
             <Link to={"/"}>Dashboard</Link>
             <Link to={"/add-product"}>Add Product</Link>
             <Link to={"/product-display"}> All Products</Link>
+            <Link to={"/users"}>All Users</Link>
+            <Link to={"/kyc-request"}>Kyc-Request</Link>
           </ul>
         </div>
         <div className="navbar-start">

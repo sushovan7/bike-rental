@@ -8,6 +8,7 @@ function Sidebar() {
       <NavItem to="/add-product" label="Add Product" />
       <NavItem to="/product-display" label="All Products" />
       <NavItem to="/users" label="All Users" />
+      <NavItem to="/kyc-request" label="Kyc Request" />
     </div>
   );
 }

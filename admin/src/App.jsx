@@ -7,6 +7,8 @@ import AddProduct from "./pages/AddProduct";
 import Login from "./pages/Login";
 import { Toaster } from "react-hot-toast";
 import AllUsers from "./pages/AllUsers";
+import KycRequest from "./pages/KycRequest";
+import ReviewKycRequest from "./pages/ReviewKycRequest";
 
 function App() {
   return (
@@ -20,11 +22,16 @@ function App() {
       />
       <Routes>
         <Route path="login" element={<Login />} />
+        <Route
+          path="review-kyc-request/:requestId"
+          element={<ReviewKycRequest />}
+        />
         <Route path="/" element={<RootLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="add-product" element={<AddProduct />} />
           <Route path="product-display" element={<ProductDisplay />} />
           <Route path="users" element={<AllUsers />} />
+          <Route path="kyc-request" element={<KycRequest />} />
         </Route>
       </Routes>
     </>
