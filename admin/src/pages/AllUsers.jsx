@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 
 function AllUsers() {
   const [selectedUser, setSelectedUser] = useState(null);
-  const [selectedIds, setSelectedIds] = useState([]);
   const [deletingUserId, setDeletingUserId] = useState(null);
   const [avatar, setAvatar] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -68,7 +67,7 @@ function AllUsers() {
     }
 
     const response = await axios.delete(
-      `${import.meta.env.VITE_BACKEND_BASE_URL}/admin/delete-user/${id}`,
+      `${import.meta.env.VITE_BACKEND_BASE_URL}/admin/users/${id}`,
       { headers: { token } }
     );
 
@@ -150,15 +149,6 @@ function AllUsers() {
     reset();
   };
 
-  function handleSelectedUser(id) {
-    if (selectedIds.includes(id)) {
-      const updatedIds = selectedIds.filter((itemId) => id !== itemId);
-      setSelectedIds(updatedIds);
-    } else {
-      setSelectedIds([...selectedIds, id]);
-    }
-  }
-
   if (isPending) {
     return <span>Loading...</span>;
   }
@@ -206,7 +196,6 @@ function AllUsers() {
         <table className="table min-w-[800px]">
           <thead>
             <tr>
-              <th></th>
               <th>Name</th>
               <th>Kyc?</th>
               <th>Gender</th>
@@ -218,15 +207,6 @@ function AllUsers() {
             {data?.users && data.users.length > 0
               ? data.users.map((user) => (
                   <tr key={user._id}>
-                    <th>
-                      <label>
-                        <input
-                          onChange={() => handleSelectedUser(user._id)}
-                          type="checkbox"
-                          className="checkbox"
-                        />
-                      </label>
-                    </th>
                     <td>
                       <div className="flex items-center gap-3">
                         <div className="avatar">
@@ -479,9 +459,8 @@ function AllUsers() {
                         <div className="tooltip" data-tip="delete">
                           <button
                             disabled={
-                              (deleteMutation.isPending &&
-                                deleteUser === user._id) ||
-                              selectedIds.length > 1
+                              deleteMutation.isPending &&
+                              deleteUser === user._id
                             }
                             onClick={() => handleDeleteUser(user._id)}
                             className="btn px-2  btn-error btn-sm"

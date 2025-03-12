@@ -27,6 +27,7 @@ function KycRequest() {
     queryKey: ["kycRequests"],
     queryFn: fetchKycRequest,
   });
+  console.log(data);
 
   if (isPending) {
     return <span>Loading...</span>;
@@ -51,54 +52,63 @@ function KycRequest() {
           </tr>
         </thead>
         <tbody>
-          {data.kycRequest && data.kycRequest.length > 0
-            ? data.kycRequest.map((request) => {
-                return (
-                  <tr key={request._id}>
-                    <td>
-                      <div className="flex items-center gap-3">
-                        <div className="avatar">
-                          <div className="mask mask-squircle h-12 w-12">
-                            <img
-                              src={request.userId.avatar}
-                              alt="Avatar Tailwind CSS Component"
-                            />
-                          </div>
-                        </div>
-                        <div>
-                          <div className="font-bold">
-                            {request.userId.firstName}
-                          </div>
-                          <div className="text-sm opacity-50">
-                            {request.userId.lastName}
-                          </div>
+          {data.kycRequest &&
+          Array.isArray(data.kycRequest) &&
+          data.kycRequest.length > 0 ? (
+            data.kycRequest.map((request) => {
+              return (
+                <tr key={request._id}>
+                  <td>
+                    <div className="flex items-center gap-3">
+                      <div className="avatar">
+                        <div className="mask mask-squircle h-12 w-12">
+                          <img
+                            src={request.userId.avatar}
+                            alt="Avatar Tailwind CSS Component"
+                          />
                         </div>
                       </div>
-                    </td>
+                      <div>
+                        <div className="font-bold">
+                          {request.userId.firstName}
+                        </div>
+                        <div className="text-sm opacity-50">
+                          {request.userId.lastName}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
 
-                    <td>
-                      {request.kycStatus === "PENDING" ? (
-                        <div className="badge badge-error">
-                          {request.kycStatus}
-                        </div>
-                      ) : (
-                        <div className="badge badge-success">
-                          {request.kycStatus}
-                        </div>
-                      )}
-                    </td>
-                    <th>
-                      <Link
-                        to={`/review-kyc-request/${request._id}`}
-                        className="btn btn-info btn-sm"
-                      >
-                        Review
-                      </Link>
-                    </th>
-                  </tr>
-                );
-              })
-            : "No request present at the moment"}
+                  <td>
+                    {request.kycStatus === "PENDING" ||
+                    request.kycStatus === "REJECTED" ? (
+                      <div className="badge badge-error">
+                        {request.kycStatus}
+                      </div>
+                    ) : (
+                      <div className="badge badge-success">
+                        {request.kycStatus}
+                      </div>
+                    )}
+                  </td>
+                  <th>
+                    <Link
+                      to={`/review-kyc-request/${request._id}`}
+                      className="btn btn-info btn-sm"
+                    >
+                      Review
+                    </Link>
+                  </th>
+                </tr>
+              );
+            })
+          ) : (
+            <tr>
+              <td colSpan="3" className="text-center">
+                No request present at the moment
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

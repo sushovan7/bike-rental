@@ -1,11 +1,16 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { useNavigate, useParams } from "react-router-dom";
 
 const ReviewKycRequest = () => {
   const { requestId } = useParams();
+  const navigate = useNavigate();
+  const [btnDisabled, setBtnDisabled] = useState(false);
 
+  const queryClient = useQueryClient();
   const fetchKycRequest = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -31,6 +36,85 @@ const ReviewKycRequest = () => {
     queryFn: fetchKycRequest,
   });
 
+  const rejectMutation = useMutation({
+    mutationFn: async () => {
+      const response = await axios.delete(
+        `${
+          import.meta.env.VITE_BACKEND_BASE_URL
+        }/kyc/kyc-request/reject/${requestId}`,
+        {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+        }
+      );
+      console.log(response.data);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (data.success) {
+        toast.success("Kyc rejected successfully!");
+        queryClient.invalidateQueries({ queryKey: ["kycRequests"] });
+        navigate("/kyc-request");
+      } else {
+        toast.error(data.message || "Failed to reject kyc.");
+      }
+    },
+    onError: (error) => {
+      if (error.response) {
+        console.log(error.response);
+        const errorMessage =
+          error.response.data?.message ||
+          "Failed to reject kyc request. Please try again.";
+        toast.error(errorMessage);
+      } else if (error.request) {
+        toast.error("Network error. Please check your connection.");
+      } else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
+    },
+  });
+
+  const approvedMutation = useMutation({
+    mutationFn: async () => {
+      const response = await axios.post(
+        `${
+          import.meta.env.VITE_BACKEND_BASE_URL
+        }/kyc/kyc-request/approve/${requestId}`,
+        {},
+        {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+        }
+      );
+
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (data.success) {
+        toast.success("Kyc approved successfully!");
+        queryClient.invalidateQueries({ queryKey: ["kycRequests"] });
+        navigate("/kyc-request");
+      } else {
+        toast.error(data.message || "Failed to approve kyc.");
+      }
+    },
+    onError: (error) => {
+      if (error.response) {
+        console.log(error.response);
+        const errorMessage =
+          error.response.data?.message ||
+          "Failed to approve kyc request. Please try again.";
+        toast.error(errorMessage);
+      } else if (error.request) {
+        toast.error("Network error. Please check your connection.");
+      } else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
+    },
+  });
+
   if (isPending) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -43,6 +127,24 @@ const ReviewKycRequest = () => {
     return (
       <div className="text-center text-red-500">Error: {error.message}</div>
     );
+  }
+
+  function handleRejectKycRequest() {
+    if (!requestId) {
+      toast.error("Invalid request ID.");
+      return;
+    }
+    rejectMutation.mutate();
+    setBtnDisabled(true);
+  }
+
+  function handleApproveKycRequest() {
+    if (!requestId) {
+      toast.error("Invalid request ID.");
+      return;
+    }
+    approvedMutation.mutate();
+    setBtnDisabled(true);
   }
 
   return (
@@ -64,7 +166,6 @@ const ReviewKycRequest = () => {
             </div>
           </div>
 
-          {/* Personal Information Section */}
           <div className="space-y-6">
             <h3 className="text-xl font-semibold">Personal Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -94,7 +195,6 @@ const ReviewKycRequest = () => {
             </div>
           </div>
 
-          {/* Address Details Section */}
           <div className="space-y-6">
             <h3 className="text-xl font-semibold">Address Details</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -117,7 +217,6 @@ const ReviewKycRequest = () => {
             </div>
           </div>
 
-          {/* Identity Verification Section */}
           <div className="space-y-6">
             <h3 className="text-xl font-semibold">Identity Verification</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -136,21 +235,21 @@ const ReviewKycRequest = () => {
                 <div className="flex flex-col md:flex-row gap-4">
                   <div className="flex-1">
                     <p className="text-sm text-gray-500">Front Photo</p>
-                    <div className="aspect-w-16 aspect-h-9">
+                    <div className="w-full h-48 md:h-64 lg:h-72">
                       <img
                         src={data.kycRequest.frontImg}
                         alt="front_image"
-                        className="object-cover w-full h-full rounded-lg"
+                        className="w-full h-full object-cover rounded-lg"
                       />
                     </div>
                   </div>
                   <div className="flex-1">
                     <p className="text-sm text-gray-500">Back Photo</p>
-                    <div className="aspect-w-16 aspect-h-9">
+                    <div className="w-full h-48 md:h-64 lg:h-72">
                       <img
                         src={data.kycRequest.backImg}
                         alt="back_image"
-                        className="object-cover w-full h-full rounded-lg"
+                        className="w-full h-full object-cover rounded-lg"
                       />
                     </div>
                   </div>
@@ -159,7 +258,6 @@ const ReviewKycRequest = () => {
             </div>
           </div>
 
-          {/* Driving License Section */}
           <div className="space-y-6">
             <h3 className="text-xl font-semibold">Driving License</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -169,18 +267,17 @@ const ReviewKycRequest = () => {
               </div>
               <div className="md:col-span-2 lg:col-span-3">
                 <p className="text-sm text-gray-500">Driving License Image</p>
-                <div className="aspect-w-16 aspect-h-9">
+                <div className="w-full h-48 md:h-64 lg:h-72">
                   <img
                     src={data.kycRequest.licenseImg}
                     alt="license_image"
-                    className="object-cover w-full h-full rounded-lg"
+                    className="w-full h-full object-cover rounded-lg"
                   />
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Emergency Contact Section */}
           <div className="space-y-6 p-6 bg-base-100 rounded-lg">
             <h3 className="text-xl font-semibold">Emergency Contact</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -205,7 +302,6 @@ const ReviewKycRequest = () => {
             </div>
           </div>
 
-          {/* Agreement & Consent Section */}
           <div className="space-y-6">
             <div>
               <p className="text-sm text-gray-500">Terms & Conditions</p>
@@ -225,10 +321,29 @@ const ReviewKycRequest = () => {
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex gap-4 justify-end">
-            <button className="btn btn-error">Reject</button>
-            <button className="btn btn-success">Approve</button>
+            <button
+              disabled={rejectMutation.isPending || btnDisabled}
+              onClick={handleRejectKycRequest}
+              className="btn btn-error"
+            >
+              {rejectMutation.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                " Reject"
+              )}
+            </button>
+            <button
+              onClick={handleApproveKycRequest}
+              disabled={approvedMutation.isPending || btnDisabled}
+              className="btn btn-success"
+            >
+              {approvedMutation.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "     Approve"
+              )}
+            </button>
           </div>
         </div>
       </div>
