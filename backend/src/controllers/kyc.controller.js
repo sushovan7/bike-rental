@@ -1,6 +1,12 @@
 import { kycModel } from "../models/kyc.models.js";
+import { userModel } from "../models/user.models.js";
 import { uploadOnCloudinary } from "../utils/cloudinaryConfig.js";
+import {
+  kycRejectionEmail,
+  kycVerificationSuccessEmail,
+} from "../utils/emailTemplate.js";
 import { requiredKycData } from "../utils/kycValidation.js";
+import transporter from "../utils/nodemailerConfig.js";
 
 export async function createKyc(req, res) {
   try {
@@ -143,6 +149,111 @@ export async function getSinglKycRequest(req, res) {
     return res.status(500).json({
       success: false,
       message: "Failed to fetch KYC requests",
+      error: error.message,
+    });
+  }
+}
+
+export async function rejectKycRequest(req, res) {
+  try {
+    const { requestId } = req.params;
+
+    if (!requestId) {
+      return res.status(400).json({
+        success: false,
+        message: "Request ID is invalid",
+      });
+    }
+
+    const updatedKyc = await kycModel.findByIdAndUpdate(
+      requestId,
+      {
+        kycStatus: "REJECTED",
+      },
+      { new: true }
+    );
+
+    if (!updatedKyc) {
+      return res.status(404).json({
+        success: false,
+        message: "KYC request not found",
+      });
+    }
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_FROM,
+      to: updatedKyc.emailAddress,
+      subject: "KYC Request Rejected",
+      html: kycRejectionEmail(updatedKyc.fullName, "Reeliic"),
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "KYC request rejected successfully",
+      data: updatedKyc,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to reject KYC request",
+      error: error.message,
+    });
+  }
+}
+
+export async function approveKycRequest(req, res) {
+  try {
+    const { requestId } = req.params;
+
+    if (!requestId) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid requestId",
+      });
+    }
+
+    const kycRequest = await kycModel.findById(requestId);
+    if (!kycRequest) {
+      return res.status(404).json({
+        success: false,
+        message: "KYC request not found",
+      });
+    }
+
+    if (kycRequest.kycStatus === "VERIFIED") {
+      return res.status(400).json({
+        success: false,
+        message: "KYC request is already verified",
+      });
+    }
+
+    kycRequest.kycStatus = "VERIFIED";
+    await kycRequest.save();
+    const user = await userModel.findById(kycRequest.userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    user.kycVerified = true;
+    await user.save();
+    await transporter.sendMail({
+      from: process.env.EMAIL_FROM,
+      to: kycRequest.emailAddress,
+      subject: "KYC Verification Successful",
+      html: kycVerificationSuccessEmail(kycRequest.fullName, "Reeliic"),
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "KYC verified successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to approve KYC request",
       error: error.message,
     });
   }

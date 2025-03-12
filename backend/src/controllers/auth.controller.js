@@ -321,12 +321,10 @@ export async function forgotPassword(req, res) {
 
     await user.save();
 
-    // send mail with password reset link
-
     const resetPasswordContent = resetPasswordLinkEmail(resetToken);
 
     await transporter.sendMail({
-      from: "bhattaraisushovan999@gmail.com",
+      from: process.env.EMAIL_FROM,
       to: email,
       subject: "Reset passowrd link",
       html: resetPasswordContent,
@@ -393,7 +391,7 @@ export async function resetPassword(req, res) {
     await user.save();
 
     await transporter.sendMail({
-      from: "bhattaraisushovan999@gmail.com",
+      from: process.env.EMAIL_FROM,
       to: user.email,
       subject: "Password reset successful",
       html: successPasswordResetMail,

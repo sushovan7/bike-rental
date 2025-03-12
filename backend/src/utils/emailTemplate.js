@@ -91,3 +91,119 @@ export const successPasswordResetMail = `<!DOCTYPE html>
         </div>
     </body>
     </html>`;
+
+export const kycRejectionEmail = (userName, companyName) => {
+  const rejectionReason =
+    "The information provided in your KYC submission could not be verified. Please review your details and resubmit your application for approval.";
+
+  return `<!DOCTYPE html>
+          <html>
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>KYC Verification Rejected</title>
+              <style>
+                  body {
+                      font-family: Arial, sans-serif;
+                      background-color: #f4f4f4;
+                      padding: 20px;
+                  }
+                  .container {
+                      max-width: 600px;
+                      margin: 0 auto;
+                      background: #ffffff;
+                      padding: 20px;
+                      border-radius: 8px;
+                      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                      text-align: left;
+                  }
+                  h2 {
+                      color: #333;
+                  }
+                  p {
+                      color: #555;
+                      line-height: 1.6;
+                  }
+                  .footer {
+                      margin-top: 20px;
+                      font-size: 14px;
+                      color: #777;
+                      text-align: center;
+                  }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <h2>KYC Verification Rejected</h2>
+                  <p>Dear ${userName},</p>
+                  <p>We regret to inform you that your KYC (Know Your Customer) verification request has been rejected. Below are the details of the rejection:</p>
+                  <ul>
+                      <li><strong>Reason for Rejection:</strong> ${rejectionReason}</li>
+                    
+                  </ul>
+                  <p>Please review the information you submitted and ensure it meets our requirements. If you have any questions or need further assistance, feel free to reach out to our support team.</p>
+                  <p>To resubmit your KYC request, please log in to your account and follow the instructions provided.</p>
+                  <p>Thank you for your understanding and cooperation.</p>
+                  <div class="footer">
+                      <p>Best regards,</p>
+                      <p><strong>${companyName}</strong></p>
+                     
+                  </div>
+              </div>
+          </body>
+          </html>`;
+};
+
+export const kycVerificationSuccessEmail = (fullName, companyName) => {
+  return `<!DOCTYPE html>
+      <html>
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>KYC Verification Successful</title>
+          <style>
+              body {
+                  font-family: Arial, sans-serif;
+                  background-color: #f4f4f4;
+                  padding: 20px;
+              }
+              .container {
+                  max-width: 600px;
+                  margin: 0 auto;
+                  background: #ffffff;
+                  padding: 20px;
+                  border-radius: 8px;
+                  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                  text-align: left;
+              }
+              h2 {
+                  color: #333;
+              }
+              p {
+                  color: #555;
+                  line-height: 1.6;
+              }
+              .footer {
+                  margin-top: 20px;
+                  font-size: 14px;
+                  color: #777;
+                  text-align: center;
+              }
+          </style>
+      </head>
+      <body>
+          <div class="container">
+              <h2>KYC Verification Successful</h2>
+              <p>Dear ${fullName},</p>
+              <p>We are pleased to inform you that your KYC (Know Your Customer) verification has been successfully completed. Your account is now fully verified and ready to use.</p>
+              <p>If you have any questions or need further assistance, feel free to reach out to our support team .</p>
+              <p>Thank you for choosing ${companyName}!</p>
+              <div class="footer">
+                  <p>Best regards,</p>
+                  <p><strong>${companyName}</strong></p>
+                  
+              </div>
+          </div>
+      </body>
+      </html>`;
+};
