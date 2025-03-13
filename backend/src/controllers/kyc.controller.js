@@ -31,7 +31,6 @@ export async function createKyc(req, res) {
     }
 
     const userId = req.user?._id;
-    console.log(userId);
     if (!userId) {
       return res.status(401).json({
         success: false,
@@ -41,15 +40,24 @@ export async function createKyc(req, res) {
 
     const existingKyc = await kycModel.findOne({
       userId,
-      kycStatus: { $in: ["PENDING", "VERIFIED"] },
+      kycStatus: { $in: ["PENDING", "VERIFIED", "REJECTED"] },
     });
 
     if (existingKyc) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "You already have a submitted KYC request. Please wait for approval or resubmit only if rejected.",
-      });
+      if (existingKyc.kycStatus === "PENDING") {
+        return res.status(400).json({
+          success: false,
+          message:
+            "You already have a submitted KYC request. Please wait for approval or resubmit only if rejected.",
+        });
+      }
+      if (existingKyc.kycStatus === "VERIFIED") {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Your KYC is already verified, so you cannot resubmit kyc request",
+        });
+      }
     }
 
     const imagesPath = [
