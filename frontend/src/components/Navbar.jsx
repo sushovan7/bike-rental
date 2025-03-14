@@ -162,25 +162,15 @@ function Navbar() {
             <div className="dropdown dropdown-end ml-2">
               <div tabIndex={0} role="button" className="avatar">
                 {isKycVerified ? (
-                  <div className="avatar relative online">
+                  <div className="avatar avatar-online ">
                     <div className="w-12 rounded-full">
-                      <img
-                        src={
-                          user?.avatar ||
-                          "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                        }
-                      />
+                      <img src={user?.avatar} />
                     </div>
                   </div>
                 ) : (
                   <div className="avatar offline">
                     <div className="w-12 rounded-full">
-                      <img
-                        src={
-                          user?.avatar ||
-                          "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                        }
-                      />
+                      <img src={user?.avatar} />
                     </div>
                   </div>
                 )}
@@ -203,9 +193,11 @@ function Navbar() {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/kyc" className="hover:bg-[#5753E8] rounded-lg">
-                    Verify Kyc
-                  </Link>
+                  {!isKycVerified && (
+                    <Link to="/kyc" className="hover:bg-[#5753E8] rounded-lg">
+                      Verify KYC
+                    </Link>
+                  )}
                 </li>
                 <li>
                   <button

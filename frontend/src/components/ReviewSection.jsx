@@ -3,12 +3,14 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
-import { Edit2, Loader2, Trash2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Edit2, Loader2, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 function ProductDetails({ productId }) {
   const queryClient = useQueryClient();
   const { token, user } = useSelector((state) => state.auth);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const {
     register,
@@ -108,6 +110,7 @@ function ProductDetails({ productId }) {
       }
     },
   });
+  console.log(data);
 
   if (!data) {
     return <p>Please wait a moment ...</p>;
@@ -117,11 +120,34 @@ function ProductDetails({ productId }) {
     deleteReviewMutation.mutate(id);
   }
 
+  const itemsPerPage = 5;
+  const noOfPages = Math.floor(data.bikeReviews.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const reviewsToDisPlay =
+    data.bikeReviews &&
+    data.bikeReviews.length > 0 &&
+    [...data.bikeReviews].reverse().slice(startIndex, endIndex);
+
+  function handleNext() {
+    if (currentPage < noOfPages) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  }
+  function handlePrevious() {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  }
+
+  if (!reviewsToDisPlay) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="container mx-auto p-4 flex flex-col">
       <div className="mt-8">
         <h2 className="text-2xl font-semibold mb-4">Customer Reviews</h2>
-
         <form onSubmit={handleSubmit(onSubmit)} className="mb-6">
           <div className="mb-4">
             <p className="text-sm font-medium mb-2">Your Rating</p>
@@ -176,11 +202,10 @@ function ProductDetails({ productId }) {
             )}
           </button>
         </form>
-
         {/* Display Reviews */}
         <div className="space-y-4">
-          {data.bikeReviews && data.bikeReviews.length > 0 ? (
-            data.bikeReviews.map((review) => (
+          {reviewsToDisPlay && reviewsToDisPlay.length > 0 ? (
+            reviewsToDisPlay.map((review) => (
               <div
                 key={review._id}
                 className="p-4 border border-gray-600 rounded-lg"
@@ -217,7 +242,7 @@ function ProductDetails({ productId }) {
                       key={star}
                       type="radio"
                       name="display-rating"
-                      className="mask mask-star-2 bg-orange-400"
+                      className="mask mask-star-2 bg-yellow-500"
                       aria-label={`${star} star`}
                       checked={star === review.rating}
                       readOnly
@@ -229,6 +254,23 @@ function ProductDetails({ productId }) {
           ) : (
             <p>No reviews yet. Be the first to review!</p>
           )}
+        </div>
+        <div className="join mt-6 flex gap-4">
+          <button
+            disabled={currentPage === 1}
+            onClick={handlePrevious}
+            className="join-item  btn btn-outline btn-primary"
+          >
+            <ArrowLeft />
+          </button>
+          <p className="join-item btn btn-primary">Page {currentPage}</p>
+          <button
+            disabled={currentPage === noOfPages}
+            onClick={handleNext}
+            className="join-item btn btn-outline btn-primary"
+          >
+            <ArrowRight />
+          </button>
         </div>
       </div>
     </div>
