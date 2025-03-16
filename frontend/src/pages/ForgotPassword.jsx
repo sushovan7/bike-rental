@@ -1,15 +1,15 @@
 import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 import { CheckCircle, Loader2, Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
-import API from "../utils/axiosInstance";
 
 const ForgotPassword = () => {
   const mutation = useMutation({
     mutationFn: async (resetPassworddata) => {
-      const response = await API.post(
-        "/auth/forgot-password",
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/auth/forgot-password`,
         resetPassworddata
       );
       console.log(response.data);
