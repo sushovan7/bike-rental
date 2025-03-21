@@ -9,6 +9,7 @@ import { Toaster } from "react-hot-toast";
 import AllUsers from "./pages/AllUsers";
 import KycRequest from "./pages/KycRequest";
 import ReviewKycRequest from "./pages/ReviewKycRequest";
+import AddMessage from "./pages/AddMessage";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route path="product-display" element={<ProductDisplay />} />
           <Route path="users" element={<AllUsers />} />
           <Route path="kyc-request" element={<KycRequest />} />
+          <Route path="add-message" element={<AddMessage />} />
         </Route>
       </Routes>
     </>
