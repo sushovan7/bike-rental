@@ -11,6 +11,12 @@ function Navbar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { token, user } = useSelector((state) => state.auth);
+  const data = useSelector((state) => state.notification.notificationsData);
+  const notificationCount = data.filter(
+    (notification) => notification.read !== true
+  ).length;
+
+  console.log(data);
   const isKycVerified = user?.kycVerified || false;
   const favouriteCount = useSelector(
     (state) => state.favourite.favouriteData.length
@@ -149,7 +155,7 @@ function Navbar() {
           <>
             <Link to={"/notifications"} className="relative">
               <div className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-[#5753E8] flex items-center justify-center text-xs">
-                1
+                {notificationCount}
               </div>
               <Bell size={24} />
             </Link>
