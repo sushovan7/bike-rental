@@ -15,9 +15,6 @@ const notificationSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    link: {
-      type: String, // URL to the related resource (e.g., order, review)
-    },
   },
   { timestamps: true }
 );
