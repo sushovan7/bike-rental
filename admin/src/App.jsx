@@ -10,6 +10,7 @@ import AllUsers from "./pages/AllUsers";
 import KycRequest from "./pages/KycRequest";
 import ReviewKycRequest from "./pages/ReviewKycRequest";
 import AddMessage from "./pages/AddMessage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -22,18 +23,21 @@ function App() {
         }}
       />
       <Routes>
-        <Route path="login" element={<Login />} />
-        <Route
-          path="review-kyc-request/:requestId"
-          element={<ReviewKycRequest />}
-        />
-        <Route path="/" element={<RootLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="add-product" element={<AddProduct />} />
-          <Route path="product-display" element={<ProductDisplay />} />
-          <Route path="users" element={<AllUsers />} />
-          <Route path="kyc-request" element={<KycRequest />} />
-          <Route path="add-message" element={<AddMessage />} />
+        <Route path="/login" element={<Login />} />
+
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<RootLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="add-product" element={<AddProduct />} />
+            <Route path="product-display" element={<ProductDisplay />} />
+            <Route path="users" element={<AllUsers />} />
+            <Route path="kyc-request" element={<KycRequest />} />
+            <Route path="add-message" element={<AddMessage />} />
+            <Route
+              path="review-kyc-request/:requestId"
+              element={<ReviewKycRequest />}
+            />
+          </Route>
         </Route>
       </Routes>
     </>

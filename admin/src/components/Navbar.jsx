@@ -29,7 +29,7 @@ function Navbar() {
         toast.success("Logout successful!");
         localStorage.removeItem("token");
         setToken(null);
-        navigate("/");
+        navigate("/login");
       }
     },
     onError: (error) => {
