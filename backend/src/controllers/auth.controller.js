@@ -263,7 +263,7 @@ export async function refreshAccessToken(req, res) {
 
     return res
       .status(200)
-      .cookir("refreshToken", refreshToken, {
+      .cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
