@@ -27,7 +27,6 @@ function KycRequest() {
     queryKey: ["kycRequests"],
     queryFn: fetchKycRequest,
   });
-  console.log(data);
 
   if (isPending) {
     return <span>Loading...</span>;
