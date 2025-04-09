@@ -4,8 +4,10 @@ import { Toaster } from "react-hot-toast";
 import LoadingScreen from "./components/LoadingScreen";
 import ProtectedRoutes from "./components/ProtectedRoutes";
 import EditReview from "./pages/EditReview";
+import Verify from "./pages/Verify";
 
 const ProductDetails = lazy(() => import("./pages/ProductDetails"));
+const PlaceOrder = lazy(() => import("./pages/PlaceOrder"));
 const KycForm = lazy(() => import("./pages/KycForm"));
 const RootLayout = lazy(() => import("./pages/RootLayout"));
 const Inventory = lazy(() => import("./pages/Inventory"));
@@ -104,6 +106,22 @@ function App() {
               element={
                 <ProtectedRoutes>
                   <KycForm />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="place-order/:bikeId"
+              element={
+                <ProtectedRoutes>
+                  <PlaceOrder />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="verify"
+              element={
+                <ProtectedRoutes>
+                  <Verify />
                 </ProtectedRoutes>
               }
             />

@@ -13,17 +13,20 @@ import {
   ThumbsUp,
   Wrench,
 } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import ReviewSection from "../components/ReviewSection";
 import { useEffect } from "react";
+import BestsellerProducts from "../components/BestSellerProducts";
+import RecentProducts from "../components/RecentProducts";
 
 function ProductDetails() {
   const { token } = useSelector((state) => state.auth);
   const { productId } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -212,7 +215,10 @@ function ProductDetails() {
                   )}
               </p>
             </div>
-            <button className="mt-4 text-lg cursor-pointer w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-dark transitionn font-bold">
+            <button
+              onClick={() => navigate(`/place-order/${productId}`)}
+              className="mt-4 text-lg cursor-pointer w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-dark transitionn font-bold"
+            >
               {data.product.condition === "New" ? "Buy Bike" : "Rent Bike"}
             </button>
           </div>
@@ -346,6 +352,8 @@ function ProductDetails() {
       </div>
 
       <ReviewSection productId={productId} />
+      <BestsellerProducts />
+      <RecentProducts />
     </div>
   );
 }

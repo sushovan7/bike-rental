@@ -5,6 +5,7 @@ import OurMission from "../components/OurMission";
 
 import WhyUsContainer from "../components/WhyUsContainer";
 import { useEffect } from "react";
+import BestsellerProducts from "../components/BestSellerProducts";
 
 function About() {
   useEffect(() => {
@@ -21,6 +22,7 @@ function About() {
         />
       </div>
       <WhyUsContainer />
+      <BestsellerProducts />
       <NewsLetter />
     </div>
   );
