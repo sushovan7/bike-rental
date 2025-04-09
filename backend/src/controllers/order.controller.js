@@ -186,7 +186,7 @@ export async function confirmStripe(req, res) {
 
 export async function allOrders(req, res) {
   try {
-    const orders = await orderModel.find({});
+    const orders = await orderModel.find({}).populate("bike");
     return res.status(200).json({
       success: true,
       orders,
