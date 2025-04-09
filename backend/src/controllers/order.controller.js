@@ -75,7 +75,7 @@ export async function stripePayment(req, res) {
 
     const orderDataToSave = {
       userId,
-      bikeId,
+      bike: bikeId,
       amount,
       address,
       phone,
@@ -162,7 +162,10 @@ export async function confirmStripe(req, res) {
     }
 
     if (isSuccess) {
-      await orderModel.findByIdAndUpdate(orderId, { payment: true });
+      await orderModel.findByIdAndUpdate(orderId, {
+        payment: true,
+        paymentStatus: "paid",
+      });
       return res.status(200).json({
         success: true,
         message: "Payment confirmed and order updated.",
@@ -203,7 +206,7 @@ export async function allOrders(req, res) {
 export async function userOrders(req, res) {
   try {
     const userId = req.user._id;
-    const orders = await orderModel.find({ userId });
+    const orders = await orderModel.find({ userId }).populate("bike");
     res.status(200).json({
       success: true,
       orders,
