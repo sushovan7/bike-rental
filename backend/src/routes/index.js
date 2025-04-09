@@ -7,6 +7,7 @@ import { favouriteRouter } from "./favorite.routes.js";
 import { reviewRouter } from "./review.routes.js";
 import { kycRouter } from "./kyc.routes.js";
 import { notificationRouter } from "./notification.routes.js";
+import { orderRouter } from "./order.routes.js";
 
 export const rootRouter = express.Router();
 
@@ -18,3 +19,4 @@ rootRouter.use("/favourite", favouriteRouter);
 rootRouter.use("/review", reviewRouter);
 rootRouter.use("/kyc", kycRouter);
 rootRouter.use("/notification", notificationRouter);
+rootRouter.use("/order", orderRouter);
