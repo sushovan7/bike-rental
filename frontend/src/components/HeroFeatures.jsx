@@ -1,28 +1,42 @@
 import { featuresData } from "../data/Landing";
+import { motion } from "framer-motion";
 
 function HeroFeatures() {
   return (
-    <section className="flex flex-col items-center justify-center w-full px-4 mb-20 md:mt-32">
-      <h1 className="text-2xl text-center font-bold mb-8">
-        Explore Our Bike Rental & Purchase Features
-      </h1>
-      <div className="flex flex-col gap-6 md:flex-row md:flex-wrap md:items-center md:justify-center">
-        {featuresData &&
-          featuresData.length > 0 &&
-          featuresData.map((feature, index) => (
-            <div
-              key={index}
-              className="card bg-base-100 py-3 w-full sm:w-96 md:w-80 lg:w-96 shadow-xl rounded-lg"
-            >
-              <div className="flex justify-center ">
-                <div className="text-4xl">{feature.icon}</div>
-              </div>
-              <div className="card-body py-2 text-center">
-                <p className="font-bold text-lg mb-2">{feature.title}</p>
-                <p className="text-gray-400">{feature.description}</p>
-              </div>
-            </div>
-          ))}
+    <section className="container mx-auto px-4 mb-32">
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+        className="text-center mb-16"
+      >
+        <h2 className="text-3xl md:text-5xl font-bold mb-4">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#605DFF] to-[#908EFF]">
+            Our Premium Features
+          </span>
+        </h2>
+        <p className="text-gray-400 max-w-2xl mx-auto">
+          Everything you need for the perfect riding experience
+        </p>
+      </motion.div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {featuresData.map((feature, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            viewport={{ once: true }}
+            whileHover={{ y: -10 }}
+            className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-8 flex flex-col items-center text-center hover:border-[#605DFF]/50 transition-all duration-300"
+          >
+            <div className="text-5xl mb-6 text-[#605DFF]">{feature.icon}</div>
+            <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
+            <p className="text-gray-400">{feature.description}</p>
+          </motion.div>
+        ))}
       </div>
     </section>
   );
