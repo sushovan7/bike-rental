@@ -16,7 +16,6 @@ function Navbar() {
     (notification) => notification.read !== true
   ).length;
 
-  console.log(data);
   const isKycVerified = user?.kycVerified || false;
   const favouriteCount = useSelector(
     (state) => state.favourite.favouriteData.length

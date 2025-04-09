@@ -110,7 +110,6 @@ function ProductDetails({ productId }) {
       }
     },
   });
-  console.log(data);
 
   if (!data) {
     return <p>Please wait a moment ...</p>;
