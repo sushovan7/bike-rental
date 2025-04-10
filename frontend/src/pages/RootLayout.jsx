@@ -4,7 +4,7 @@ import Footer from "../components/Footer";
 
 function RootLayout() {
   return (
-    <div className="container mx-auto bg-[#1D232A]">
+    <div className="container mx-auto">
       <Navbar />
       <main className="container ms-auto px-4">
         <Outlet />
