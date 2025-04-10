@@ -30,6 +30,10 @@ app.use(
   })
 );
 
+app.get("/", (req, res) => {
+  res.json({ message: "Reeliic API is running" });
+});
+
 app.use("/api/v1", rootRouter);
 
 connectDb()
