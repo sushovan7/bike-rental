@@ -38,7 +38,7 @@ function BestsellerProducts() {
       </div>
     );
 
-  const bestsellerProducts = data?.products
+  const bestsellerProducts = (data?.products || [])
     .filter((product) => product.bestSeller === true)
     .slice(0, 4);
 
