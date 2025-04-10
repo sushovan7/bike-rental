@@ -37,8 +37,11 @@ function RecentProducts() {
       </div>
     );
 
-  // Get the top 5 most recent products by sorting by createdAt
-  const recentProducts = data?.products
+  if (!data) {
+    return <p>please wait ...</p>;
+  }
+
+  const recentProducts = (data?.products || [])
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 4);
 

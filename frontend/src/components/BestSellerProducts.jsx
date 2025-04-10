@@ -38,6 +38,10 @@ function BestsellerProducts() {
       </div>
     );
 
+  if (!data) {
+    return <p>Please ait ...</p>;
+  }
+
   const bestsellerProducts = (data?.products || [])
     .filter((product) => product.bestSeller === true)
     .slice(0, 4);
