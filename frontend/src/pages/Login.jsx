@@ -3,7 +3,7 @@ import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { setToken } from "../features/auth/authSlice";
 import axios from "axios";
 
@@ -117,15 +117,25 @@ function Login() {
         </button>
 
         <p className="text-sm text-gray-500 mt-3 text-center">
-          <a href="/forgot-password" className="text-[#5753E8]">
+          <Link to="/forgot-password" className="text-[#5753E8]">
             Forgot your password?
-          </a>
+          </Link>
         </p>
 
         <p className="text-sm text-gray-500 mt-3 text-center">
           Don&apos;t have an account?{" "}
-          <a href="/signup" className="text-[#5753E8]">
+          <Link to="/signup" className="text-[#5753E8]">
             Sign up
+          </Link>
+        </p>
+
+        <p className="text-xs text-gray-400 mt-6 text-center">
+          <a
+            href="https://reeliic-admin.vercel.app"
+            target="_blank"
+            className="text-[#5753E8]"
+          >
+            Admin Login
           </a>
         </p>
       </form>
