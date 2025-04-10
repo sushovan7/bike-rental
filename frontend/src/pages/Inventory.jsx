@@ -81,7 +81,7 @@ function Inventory() {
     return <div>{error.message}</div>;
   }
 
-  const itemPerPage = 10;
+  const itemPerPage = 8;
   const startIndex = (currentPage - 1) * itemPerPage;
   const endIndex = startIndex + itemPerPage;
   const noOfPages = Math.ceil(data.products.length / itemPerPage);
