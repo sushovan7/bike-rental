@@ -73,6 +73,8 @@ function Navbar() {
             <Link to={"/product-display"}> All Products</Link>
             <Link to={"/users"}>All Users</Link>
             <Link to={"/kyc-request"}>Kyc-Request</Link>
+            <Link to="/orders">All Orders</Link>
+            <Link to="/add-message">Add Message</Link>
           </ul>
         </div>
         <div className="navbar-start">
