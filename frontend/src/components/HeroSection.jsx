@@ -5,10 +5,8 @@ import { motion } from "framer-motion";
 function HeroSection() {
   return (
     <div className="relative pb-20 overflow-hidden">
-      {/* Background Gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#605DFF]/10 via-[#605DFF]/5 to-transparent -z-10"></div>
 
-      {/* Floating Bubbles */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-20">
         {[...Array(15)].map((_, i) => (
           <motion.div
@@ -36,7 +34,6 @@ function HeroSection() {
 
       <section className="container pt-32 md:min-h-[90vh] flex flex-col px-4 items-center md:justify-center mx-auto">
         <div className="flex mb-8 items-center justify-center gap-2 flex-col text-center">
-          {/* Animated Headings */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -64,7 +61,6 @@ function HeroSection() {
             </h1>
           </motion.div>
 
-          {/* Animated Paragraph */}
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -89,7 +85,6 @@ function HeroSection() {
             </span>
           </motion.p>
 
-          {/* Features List */}
           <motion.ul
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -120,7 +115,6 @@ function HeroSection() {
           </motion.ul>
         </div>
 
-        {/* CTA Button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -141,7 +135,6 @@ function HeroSection() {
           </Link>
         </motion.div>
 
-        {/* Floating Bike Image */}
         <motion.img
           src="http://res.cloudinary.com/sushovanbhattarai/image/upload/v1741186988/d8peiwogdwjht6zqloem.avif"
           alt="Bike"

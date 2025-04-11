@@ -22,7 +22,6 @@ function HowItWorks() {
       </motion.div>
 
       <div className="relative">
-        {/* Timeline */}
         <div className="hidden md:block absolute left-1/2 top-0 h-full w-0.5 bg-gradient-to-b from-[#605DFF] to-[#908EFF] -translate-x-1/2"></div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -37,7 +36,6 @@ function HowItWorks() {
                 index % 2 === 0 ? "md:mt-0" : "md:mt-20"
               }`}
             >
-              {/* Step number with gradient circle */}
               <div className="relative mb-6">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#605DFF] to-[#908EFF] rounded-full blur-md opacity-30"></div>
                 <div className="relative flex items-center justify-center h-16 w-16 bg-gradient-to-br from-[#605DFF] to-[#908EFF] rounded-full text-white text-2xl font-bold">

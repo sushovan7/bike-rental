@@ -15,7 +15,6 @@ function PlaceOrder() {
   const [orderType, setOrderType] = useState("buy");
   const navigate = useNavigate();
 
-  // Set default rental duration to 1 day
   const today = new Date().toISOString().split("T")[0];
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -36,7 +35,6 @@ function PlaceOrder() {
     phone: "",
   });
 
-  // Form validation state
   const [formErrors, setFormErrors] = useState({});
 
   async function fetchProducts() {
@@ -68,7 +66,6 @@ function PlaceOrder() {
     queryFn: fetchProducts,
   });
 
-  // Set order type based on product data
   useEffect(() => {
     if (data?.product) {
       setOrderType(data.product.price ? "buy" : "rent");
@@ -120,30 +117,28 @@ function PlaceOrder() {
   const onChangeHandler = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear error when field is edited
+
     if (formErrors[name]) {
       setFormErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
-  // Calculate rental days based on dates
   const calculateRentalDays = () => {
-    if (!startDate || !endDate) return 1; // Default to 1 day
+    if (!startDate || !endDate) return 1;
     const start = new Date(startDate);
     const end = new Date(endDate);
     const diffTime = Math.abs(end - start);
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 to include both start and end days
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
   };
 
   const rentalDays = calculateRentalDays();
 
-  // Calculate subtotal based on order type
   const subtotal =
     orderType === "buy"
       ? data?.product?.price || 0
       : (data?.product?.rentalPrice || 0) * rentalDays;
 
-  const shipping = 1500; // Flat rate shipping
+  const shipping = 1500;
   const total = subtotal + shipping;
 
   const placeOrder = async () => {
@@ -168,7 +163,6 @@ function PlaceOrder() {
         phone: formData.phone,
       };
 
-      // Add rental-specific fields if it's a rental
       if (orderType === "rent") {
         orderData.rentalStartDate = startDate;
         orderData.rentalEndDate = endDate;
@@ -228,7 +222,7 @@ function PlaceOrder() {
 
         const response = await axios.post(
           `${import.meta.env.VITE_BACKEND_BASE_URL}/order/stripe`,
-          orderData, // Send the data directly, without wrapping it in another object
+          orderData,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -237,7 +231,8 @@ function PlaceOrder() {
         );
 
         if (response.data.session_url) {
-          window.location.replace(response.data.session_url); // Redirect to Stripe Checkout
+          window.location.replace(response.data.session_url);
+          // Checkout;
         } else {
           toast.error("Failed to initiate Stripe payment");
         }
@@ -285,7 +280,6 @@ function PlaceOrder() {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Delivery Information */}
           <div className="lg:w-1/2">
             <div className="card bg-base-100 border border-gray-600">
               <div className="card-body px-6 py-4">

@@ -12,7 +12,6 @@ function Contact() {
   return (
     <div className=" text-white">
       <section className="container mx-auto px-4 py-20">
-        {/* Section Title */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -31,7 +30,6 @@ function Contact() {
         </motion.div>
 
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
-          {/* Contact Image */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}

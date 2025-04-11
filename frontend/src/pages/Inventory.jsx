@@ -87,8 +87,6 @@ function Inventory() {
   const noOfPages = Math.ceil(data.products.length / itemPerPage);
   const productsToDisplay = filteredProducts.slice(startIndex, endIndex);
 
-  // filter code
-
   function handleNext() {
     if (currentPage < noOfPages) setCurrentPage((prev) => prev + 1);
   }
@@ -126,7 +124,6 @@ function Inventory() {
         <p className="text-gray-400">Explore our wide range of bikes</p>
       </motion.div>
 
-      {/* Search and Filter Section */}
       <motion.div
         layout
         className="flex flex-col md:flex-row gap-4 mb-8 items-start"
@@ -165,7 +162,6 @@ function Inventory() {
         </div>
       </motion.div>
 
-      {/* Filter Dropdown */}
       <AnimatePresence>
         {isFilterOpen && (
           <motion.div

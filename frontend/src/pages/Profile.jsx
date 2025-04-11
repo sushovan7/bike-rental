@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import uploadImg from "../assets/uploadimg.png";
-import { updateUser } from "../features/auth/authSlice"; // ✅ Correct import
+import { updateUser } from "../features/auth/authSlice";
 import NewsLetter from "../components/NewsLetter";
 
 const Profile = () => {
