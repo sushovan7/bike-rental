@@ -1,12 +1,13 @@
 import { orderModel } from "../models/order.models.js";
 import Stripe from "stripe";
+import axios from "axios";
+import mongoose from "mongoose";
+import { userModel } from "../models/user.models.js";
 
 const currency = "usd";
 const deliveryCharge = 15;
 
-const stripe = new Stripe(
-  "sk_test_51R8O3hI0GOviTj8RCZQRZnMJ7OyjeG7pmDfk0cuYxftb3xe09um9F9LFN6gI4oXLzMakL0oSoVecb8Q1p0jqCMMB0081QDO4r3"
-);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export async function placeCOD(req, res) {
   try {
@@ -18,9 +19,31 @@ export async function placeCOD(req, res) {
       rentalDuration,
       rentalStartDate,
       rentalEndDate,
+      usedRedeemPoints = 0,
     } = req.body;
 
     const userId = req.user._id;
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+    if (usedRedeemPoints > user.redeemPoints) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Not enough redeem points" });
+    }
+
+    const earnedRedeemPoints = rentalDuration
+      ? Math.floor(amount / 1000) * 5
+      : 0;
+
+    user.redeemPoints =
+      user.redeemPoints - usedRedeemPoints + earnedRedeemPoints;
+    await user.save();
+    console.log(user);
+
     const orderDataToSave = {
       userId,
       bike: bikeId,
@@ -32,6 +55,8 @@ export async function placeCOD(req, res) {
       rentalDuration,
       rentalStartDate,
       rentalEndDate,
+      usedRedeemPoints,
+      earnedRedeemPoints,
     };
 
     const newOrder = new orderModel(orderDataToSave);
@@ -41,6 +66,8 @@ export async function placeCOD(req, res) {
     return res.status(200).json({
       success: true,
       message: "Order placed",
+      usedRedeemPoints,
+      earnedRedeemPoints,
     });
   } catch (error) {
     res.status(500).json({
@@ -55,7 +82,7 @@ export async function stripePayment(req, res) {
   try {
     const {
       bikeId,
-      amount,
+      amount, // Bike amount in NPR
       address,
       phone,
       rentalDuration,
@@ -73,10 +100,31 @@ export async function stripePayment(req, res) {
 
     const userId = req.user._id;
 
+    const deliveryChargeNPR = 200;
+    const totalAmountNPR = amount + deliveryChargeNPR;
+
+    const conversionRate = 0.0075;
+    const bikeAmountUSD = Math.round(amount * conversionRate);
+    const deliveryChargeUSD = Math.round(deliveryChargeNPR * conversionRate);
+    const totalAmountUSD = bikeAmountUSD + deliveryChargeUSD;
+
+    const existingOrder = await orderModel.findOne({
+      userId,
+      bike: bikeId,
+      payment: false,
+    });
+
+    if (existingOrder) {
+      return res.status(400).json({
+        success: false,
+        message: "You already have an unpaid order for this bike.",
+      });
+    }
+
     const orderDataToSave = {
       userId,
       bike: bikeId,
-      amount,
+      amount: totalAmountNPR,
       address,
       phone,
       paymentMethod: "stripe",
@@ -90,44 +138,43 @@ export async function stripePayment(req, res) {
     await newOrder.save();
 
     const currency = "usd";
-    const deliveryCharge = 15;
 
     const line_items = [
       {
         price_data: {
-          currency: currency,
+          currency,
           product_data: {
             name: rentalDuration ? "Bike Rental" : "Bike Purchase",
           },
-          unit_amount: amount * 100,
+          unit_amount: bikeAmountUSD * 100,
+        },
+        quantity: 1,
+      },
+      {
+        price_data: {
+          currency,
+          product_data: {
+            name: "Delivery charges",
+          },
+          unit_amount: deliveryChargeUSD * 100,
         },
         quantity: 1,
       },
     ];
 
-    line_items.push({
-      price_data: {
-        currency: currency,
-        product_data: {
-          name: "Delivery charges",
-        },
-        unit_amount: deliveryCharge * 100,
-      },
-      quantity: 1,
-    });
-
-    // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
-      line_items: line_items,
+      line_items,
       mode: "payment",
-      success_url: `${origin}/verify?success=true&orderId=${newOrder._id}`,
-      cancel_url: `${origin}/verify?success=false&orderId=${newOrder._id}`,
+      success_url: `${origin}/verify-stripe?success=true&orderId=${newOrder._id}`,
+      cancel_url: `${origin}/verify-stripe?success=false&orderId=${newOrder._id}`,
     });
 
     res.status(200).json({
       success: true,
       session_url: session.url,
+      total_npr: totalAmountNPR,
+      total_usd: totalAmountUSD,
     });
   } catch (error) {
     console.error("Error placing order with Stripe:", error);
@@ -186,6 +233,240 @@ export async function confirmStripe(req, res) {
     });
   }
 }
+
+export const khaltiPayment = async (req, res) => {
+  try {
+    const {
+      bikeId,
+      amount,
+      address,
+      phone,
+      firstName,
+      lastName,
+      email,
+      rentalDuration,
+      rentalStartDate,
+      rentalEndDate,
+    } = req.body;
+    const { origin } = req.headers;
+
+    if (!bikeId || !amount) {
+      return res.status(400).json({
+        success: false,
+        message: "Bike ID and amount are required.",
+      });
+    }
+
+    const customerPhone = phone?.toString() || "";
+    if (!/^(98|97|96)\d{8}$/.test(customerPhone)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Please provide a valid Nepali phone number (98/97/96XXXXXXXX)",
+      });
+    }
+
+    const userId = req.user._id;
+    const deliveryCharge = 15;
+    const totalAmount = (amount + deliveryCharge) * 100;
+
+    const payload = {
+      purchase_order_id: `${Date.now()}-${bikeId}`, // temp ID
+      return_url: `${origin}/verify-khalti?method=khalti`,
+      website_url: origin,
+      amount: totalAmount,
+      purchase_order_name: rentalDuration ? "Bike Rental" : "Bike Purchase",
+      customer_info: {
+        name: `${firstName} ${lastName}`.trim() || "Customer",
+        email: email || "",
+        phone: customerPhone,
+      },
+    };
+
+    const response = await axios.post(
+      "https://dev.khalti.com/api/v2/epayment/initiate/",
+      payload,
+      {
+        headers: {
+          Authorization: `Key ${process.env.KHALTI_SECRET_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return res.status(200).json({
+      success: true,
+      payment_url: response.data.payment_url,
+      pidx: response.data.pidx,
+      bikeId,
+      amount,
+      address,
+      phone: customerPhone,
+      firstName,
+      lastName,
+      email,
+      rentalDuration,
+      rentalStartDate,
+      rentalEndDate,
+    });
+  } catch (error) {
+    console.error(
+      "Khalti initiation error:",
+      error.response?.data || error.message
+    );
+    return res.status(500).json({
+      success: false,
+      message: "Failed to initiate Khalti payment",
+      error: error.response?.data?.detail || error.message,
+    });
+  }
+};
+
+export const verifyKhaltiPayment = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const {
+      pidx,
+      bikeId,
+      amount,
+      address,
+      phone,
+      firstName,
+      lastName,
+      email,
+      rentalDuration,
+      rentalStartDate,
+      rentalEndDate,
+      usedRedeemPoints = 0,
+    } = req.body;
+
+    const existingOrder = await orderModel.findOne({ pidx });
+    if (existingOrder) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(200).json({
+        success: true,
+        message: "Order already exists.",
+        order: existingOrder,
+      });
+    }
+
+    if (!pidx || !bikeId || !amount) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(400).json({
+        success: false,
+        message: "PIDX, bike ID and amount are required",
+      });
+    }
+
+    const verification = await axios.post(
+      "https://dev.khalti.com/api/v2/epayment/lookup/",
+      { pidx },
+      {
+        headers: {
+          Authorization: `Key ${process.env.KHALTI_SECRET_KEY}`,
+          "Content-Type": "application/json",
+        },
+        timeout: 10000,
+      }
+    );
+
+    if (verification.data.status !== "Completed") {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(402).json({
+        success: false,
+        message: "Payment not completed",
+        status: verification.data.status,
+      });
+    }
+
+    const khaltiAmount = verification.data.total_amount;
+    const deliveryCharge = 15;
+    const expectedAmount = Math.round((amount + deliveryCharge) * 100);
+
+    if (khaltiAmount !== expectedAmount) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(400).json({
+        success: false,
+        message: `Amount mismatch. Expected ${expectedAmount} paisa, received ${khaltiAmount} paisa`,
+      });
+    }
+    const userId = req.user._id;
+    const user = await userModel.findById(userId).session(session);
+
+    if (!user) {
+      await session.abortTransaction();
+      session.endSession();
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    if (usedRedeemPoints > user.redeemPoints) {
+      await session.abortTransaction();
+      session.endSession();
+      return res
+        .status(400)
+        .json({ success: false, message: "Not enough redeem points" });
+    }
+
+    const earnedRedeemPoints = rentalDuration
+      ? Math.floor(amount / 1000) * 5
+      : 0;
+
+    user.redeemPoints =
+      user.redeemPoints - usedRedeemPoints + earnedRedeemPoints;
+    await user.save({ session });
+
+    const orderData = {
+      userId,
+      bike: bikeId,
+      amount: expectedAmount / 100,
+      address,
+      phone,
+      firstName,
+      lastName,
+      email,
+      rentalDuration,
+      rentalStartDate,
+      rentalEndDate,
+      paymentMethod: "khalti",
+      paymentStatus: "paid",
+      payment: true,
+      transactionId: pidx,
+      paidAt: new Date(),
+      khaltiResponse: verification.data,
+    };
+
+    const [newOrder] = await orderModel.create([orderData], { session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return res.status(200).json({
+      success: true,
+      order: newOrder,
+      usedRedeemPoints,
+      earnedRedeemPoints,
+    });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+
+    console.error("Khalti verification failed:", error.message);
+
+    return res.status(500).json({
+      success: false,
+      message: "Payment verification failed",
+      error: error.message,
+    });
+  }
+};
 
 export async function allOrders(req, res) {
   try {

@@ -42,6 +42,11 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: undefined,
     },
+    redeemPoints: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
     addToFavourites: [
       {
         type: mongoose.Schema.Types.ObjectId,

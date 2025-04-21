@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema(
   {
-    // user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     userId: {
       type: String,
       required: true,
@@ -20,7 +19,7 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    paymentMethod: { type: String, enum: ["cod", "stripe"] },
+    paymentMethod: { type: String, enum: ["cod", "stripe", "khalti"] },
     paymentStatus: {
       type: String,
       enum: ["pending", "paid", "failed"],
@@ -31,11 +30,23 @@ const orderSchema = new mongoose.Schema(
       enum: ["processing", "shipped", "delivered", "cancelled"],
       default: "processing",
     },
+    pidx: {
+      type: String,
+    },
     payment: {
       type: Boolean,
       required: true,
       default: false,
     },
+    usedRedeemPoints: {
+      type: Number,
+      default: 0,
+    },
+    earnedRedeemPoints: {
+      type: Number,
+      default: 0,
+    },
+
     isRental: Boolean,
     rentalDuration: Number,
     rentalStartDate: Date,
