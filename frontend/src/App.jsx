@@ -4,7 +4,6 @@ import { Toaster } from "react-hot-toast";
 import LoadingScreen from "./components/LoadingScreen";
 import ProtectedRoutes from "./components/ProtectedRoutes";
 import EditReview from "./pages/EditReview";
-import Verify from "./pages/Verify";
 
 const ProductDetails = lazy(() => import("./pages/ProductDetails"));
 const PlaceOrder = lazy(() => import("./pages/PlaceOrder"));
@@ -19,6 +18,8 @@ const Signup = lazy(() => import("./pages/Signup"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Notifications = lazy(() => import("./pages/Notifications"));
+const VerifyStripe = lazy(() => import("./pages/VerifyStripe"));
+const VerifyKhalti = lazy(() => import("./pages/VerifyKhalti"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Orders = lazy(() => import("./pages/Orders"));
 const Favourites = lazy(() => import("./pages/Favourites"));
@@ -118,10 +119,18 @@ function App() {
               }
             />
             <Route
-              path="verify"
+              path="verify-stripe"
               element={
                 <ProtectedRoutes>
-                  <Verify />
+                  <VerifyStripe />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="verify-khalti"
+              element={
+                <ProtectedRoutes>
+                  <VerifyKhalti />
                 </ProtectedRoutes>
               }
             />

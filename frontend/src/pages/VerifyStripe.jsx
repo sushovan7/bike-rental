@@ -4,7 +4,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 
-function Verify() {
+function VerifyStripe() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const success = searchParams.get("success");
@@ -41,4 +41,4 @@ function Verify() {
   return <div>VerifyStripe</div>;
 }
 
-export default Verify;
+export default VerifyStripe;

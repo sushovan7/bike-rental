@@ -6,14 +6,19 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
+import { X } from "lucide-react";
 
 function PlaceOrder() {
   const [method, setMethod] = useState("cod");
   const [loading, setLoading] = useState(false);
+  const [showReedeemInput, setShowReedeemInputs] = useState(false);
+  const [reedeemValue, setReedeemValue] = useState(0);
   const { bikeId } = useParams();
   const { token } = useSelector((state) => state.auth);
   const [orderType, setOrderType] = useState("buy");
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
+  console.log(user._id);
 
   const today = new Date().toISOString().split("T")[0];
   const tomorrow = new Date();
@@ -60,6 +65,34 @@ function PlaceOrder() {
       throw new Error("Failed to fetch products");
     }
   }
+
+  async function fetchUser() {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/user/users/${user._id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.data) {
+        throw new Error("Invalid response structure");
+      }
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching User", error);
+      throw new Error("Failed to fetch user");
+    }
+  }
+
+  const { data: userData } = useQuery({
+    queryKey: ["userInfo"],
+    queryFn: fetchUser,
+  });
+  console.log(userData);
 
   const { data, isError, error, isPending } = useQuery({
     queryKey: ["products", bikeId],
@@ -138,16 +171,16 @@ function PlaceOrder() {
       ? data?.product?.price || 0
       : (data?.product?.rentalPrice || 0) * rentalDays;
 
-  const shipping = 1500;
-  const total = subtotal + shipping;
+  const shipping = 500;
+  const total = subtotal + shipping - reedeemValue;
 
-  const placeOrder = async () => {
+  const placeOrder = async (paymentMethod) => {
     setLoading(true);
     try {
       const orderData = {
         bikeId: bikeId,
         orderType,
-        paymentMethod: method,
+        paymentMethod: paymentMethod || method,
         amount: total,
         address: {
           street: formData.street,
@@ -156,11 +189,11 @@ function PlaceOrder() {
           zipcode: formData.zipcode,
           country: formData.country,
         },
-
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
         phone: formData.phone,
+        usedRedeemPoints: reedeemValue,
       };
 
       if (orderType === "rent") {
@@ -169,27 +202,61 @@ function PlaceOrder() {
         orderData.rentalDuration = rentalDays;
       }
 
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_BASE_URL}/order/cod`,
-        orderData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      if (paymentMethod === "khalti") {
+        const phoneStr = formData.phone?.toString() || "";
+        if (!/^(98|97|96)\d{8}$/.test(phoneStr)) {
+          throw new Error(
+            "Please provide a valid Nepali phone number (98/97/96XXXXXXXX)"
+          );
         }
+      }
+
+      let endpoint = "/order/cod";
+      if (paymentMethod === "stripe") endpoint = "/order/stripe";
+      if (paymentMethod === "khalti") endpoint = "/order/khalti";
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}${endpoint}`,
+        orderData,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      if (response.data.success) {
+      if (paymentMethod === "khalti") {
+        if (response.data.payment_url) {
+          window.location.replace(response.data.payment_url);
+          localStorage.setItem(
+            "khalti_order_data",
+            JSON.stringify({
+              pidx: response.data.pidx || "",
+              bikeId: response.data.bikeId || "",
+              amount: response.data.amount || "",
+              address: response.data.address || "",
+              phone: response.data.phone || "",
+              firstName: response.data.firstName || "",
+              lastName: response.data.lastName || "",
+              email: response.data.email || "",
+              rentalDuration: response.data.rentalDuration || "",
+              rentalStartDate: response.data.rentalDays || "",
+              rentalEndDate: response.data.rentalEndDate || "",
+            })
+          );
+        } else {
+          throw new Error(
+            response.data.message || "Failed to initiate Khalti payment"
+          );
+        }
+      } else if (response.data.session_url) {
+        window.location.replace(response.data.session_url);
+      } else if (response.data.success) {
         toast.success("Order placed successfully!");
         navigate("/orders");
       } else {
-        throw new Error(response.data.message || "Failed to place order");
+        throw new Error(response.data.message || "Failed to process order");
       }
     } catch (error) {
-      console.error("Order placement error:", error);
+      console.error("Order error:", error);
       toast.error(
-        error.response?.data?.message ||
-          "Failed to place order. Please try again."
+        error.message || "Failed to process order. Please try again."
       );
     } finally {
       setLoading(false);
@@ -200,50 +267,12 @@ function PlaceOrder() {
     e.preventDefault();
     if (!validateForm()) return;
 
-    if (method === "stripe") {
-      try {
-        setLoading(true);
-
-        const orderData = {
-          bikeId: bikeId, // Make sure bikeId is correctly passed here
-          amount: total,
-          address: {
-            street: formData.street,
-            city: formData.city,
-            state: formData.state,
-            zipcode: formData.zipcode,
-            country: formData.country,
-          },
-          phone: formData.phone,
-          rentalDuration: rentalDays,
-          rentalStartDate: startDate,
-          rentalEndDate: endDate,
-        };
-
-        const response = await axios.post(
-          `${import.meta.env.VITE_BACKEND_BASE_URL}/order/stripe`,
-          orderData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (response.data.session_url) {
-          window.location.replace(response.data.session_url);
-          // Checkout;
-        } else {
-          toast.error("Failed to initiate Stripe payment");
-        }
-      } catch (error) {
-        console.error("Stripe payment error:", error);
-        toast.error("Stripe payment failed. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      await placeOrder();
+    if (method === "cod") {
+      await placeOrder("cod");
+    } else if (method === "stripe") {
+      await placeOrder("stripe");
+    } else if (method === "khalti") {
+      await placeOrder("khalti");
     }
   };
 
@@ -271,6 +300,13 @@ function PlaceOrder() {
     );
   }
 
+  if (!userData) {
+    return (
+      <div className="alert alert-warning max-w-md mx-auto mt-8">
+        Please wait ...
+      </div>
+    );
+  }
   return (
     <>
       <form onSubmit={handleSubmit} className="container mx-auto px-4 py-8">
@@ -598,6 +634,80 @@ function PlaceOrder() {
                   </div>
                 </div>
 
+                {orderType === "rent" && userData.user.redeemPoints > 0 && (
+                  <div className="mt-4 p-4 bg-base-200 rounded-lg space-y-3">
+                    {!showReedeemInput ? (
+                      <>
+                        <button
+                          onClick={() => setShowReedeemInputs(true)}
+                          className="btn btn-success btn-sm w-full sm:w-auto"
+                        >
+                          Apply Redeem Points
+                        </button>
+                        <div className="text-sm space-y-1">
+                          <p>
+                            Available points:{" "}
+                            <span className="font-bold">
+                              {userData.user.redeemPoints} pts
+                            </span>
+                          </p>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="space-y-3">
+                        <div className="flex gap-2">
+                          <input
+                            type="number"
+                            placeholder="Enter points"
+                            className="input input-bordered flex-1"
+                            min="0"
+                            max={Math.min(
+                              userData.user.redeemPoints,
+                              total * 0.5
+                            )}
+                            value={reedeemValue}
+                            onChange={(e) =>
+                              setReedeemValue(Number(e.target.value))
+                            }
+                          />
+                          <button
+                            onClick={() => setShowReedeemInputs(false)}
+                            className="btn btn-ghost btn-square btn-sm"
+                          >
+                            <X size={18} />
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 text-sm">
+                          <div>
+                            <div className="text-gray-500">Point Value</div>
+                            <div>1 pt = Rs 1</div>
+                          </div>
+                          <div>
+                            <div className="text-gray-500">Max Redeemable</div>
+                            <div>
+                              {Math.min(
+                                userData.user.redeemPoints,
+                                total * 0.5
+                              )}{" "}
+                              pts
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="p-2 bg-success/10 rounded">
+                          <div className="flex justify-between">
+                            <span>Discount Applied</span>
+                            <span className="font-bold text-success">
+                              Rs {Math.min(reedeemValue, total * 0.5)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <div className="divider"></div>
 
                 <div className="space-y-2">
@@ -608,6 +718,10 @@ function PlaceOrder() {
                   <div className="flex justify-between">
                     <span>Shipping</span>
                     <span>Rs {shipping}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Reedeem discount</span>
+                    <span>Rs {reedeemValue ? reedeemValue : 0}</span>
                   </div>
                   <div className="flex justify-between font-bold text-lg mt-2">
                     <span>Total</span>
@@ -647,6 +761,19 @@ function PlaceOrder() {
                         }`}
                       ></div>
                       <span className="text-gray-700">Cash On Delivery</span>
+                    </div>
+                    <div
+                      onClick={() => setMethod("khalti")}
+                      className={`flex items-center gap-3 p-3 border rounded cursor-pointer ${
+                        method === "khalti" ? "border-blue-500 bg-blue-50" : ""
+                      }`}
+                    >
+                      <div
+                        className={`w-4 h-4 rounded-full border ${
+                          method === "khalti" ? "bg-blue-500" : "bg-white"
+                        }`}
+                      ></div>
+                      <span className="text-gray-700">Khalti</span>
                     </div>
                   </div>
                 </div>
