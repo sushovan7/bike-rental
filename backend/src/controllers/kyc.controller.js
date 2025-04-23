@@ -6,7 +6,7 @@ import {
   kycVerificationSuccessEmail,
 } from "../utils/emailTemplate.js";
 import { requiredKycData } from "../utils/kycValidation.js";
-import transporter from "../utils/nodemailerConfig.js";
+import { sendMail } from "../utils/resend.js";
 
 export async function createKyc(req, res) {
   try {
@@ -188,12 +188,11 @@ export async function rejectKycRequest(req, res) {
       });
     }
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_FROM,
-      to: updatedKyc.emailAddress,
-      subject: "KYC Request Rejected",
-      html: kycRejectionEmail(updatedKyc.fullName, "Reeliic"),
-    });
+    sendMail(
+      updatedKyc.emailAddress,
+      "KYC Request Rejected",
+      kycRejectionEmail(updatedKyc.fullName, "Reeliic")
+    );
 
     return res.status(200).json({
       success: true,
@@ -247,12 +246,11 @@ export async function approveKycRequest(req, res) {
 
     user.kycVerified = true;
     await user.save();
-    await transporter.sendMail({
-      from: process.env.EMAIL_FROM,
-      to: kycRequest.emailAddress,
-      subject: "KYC Verification Successful",
-      html: kycVerificationSuccessEmail(kycRequest.fullName, "Reeliic"),
-    });
+    sendMail(
+      kycRequest.emailAddress,
+      "KYC Verification Successful",
+      kycVerificationSuccessEmail(kycRequest.fullName, "Reeliic")
+    );
 
     return res.status(200).json({
       success: true,

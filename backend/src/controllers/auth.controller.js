@@ -5,12 +5,13 @@ import { generateToken } from "../utils/generateToken.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import transporter from "../utils/nodemailerConfig.js";
+
 import {
   emailVerificationTemplate,
   resetPasswordLinkEmail,
   successPasswordResetMail,
 } from "../utils/emailTemplate.js";
+import { sendMail } from "../utils/resend.js";
 
 export async function signup(req, res) {
   try {
@@ -101,12 +102,11 @@ export async function signup(req, res) {
       emailVerifyToken,
       createUser._id
     );
-    await transporter.sendMail({
-      from: process.env.EMAIL_FROM,
-      to: createUser.email,
-      subject: "Email verification Link",
-      html: emailVerificationContent,
-    });
+    sendMail(
+      createUser.email,
+      "Email verification Link",
+      emailVerificationContent
+    );
 
     const user = await userModel.findById(createUser._id).select("-password");
 
@@ -345,12 +345,7 @@ export async function forgotPassword(req, res) {
 
     const resetPasswordContent = resetPasswordLinkEmail(resetToken);
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_FROM,
-      to: email,
-      subject: "Reset passowrd link",
-      html: resetPasswordContent,
-    });
+    sendMail(email, "Reset passowrd link", resetPasswordContent);
 
     return res.status(200).json({
       success: true,
@@ -412,12 +407,7 @@ export async function resetPassword(req, res) {
     user.resetPasswordTokenExpiresAt = null;
     await user.save();
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_FROM,
-      to: user.email,
-      subject: "Password reset successful",
-      html: successPasswordResetMail,
-    });
+    sendMail(user.email, "Password reset successful", successPasswordResetMail);
 
     return res.status(200).json({
       success: true,
