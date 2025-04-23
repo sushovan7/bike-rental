@@ -1,3 +1,57 @@
+export const emailVerificationTemplate = (emailVerifyToken, id) => {
+  const verifyUrl = `${process.env.CLIENT_URL}/verify-email?token=${token}&id=${userId}`;
+  return `<!DOCTYPE html>
+      <html>
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Verify Your Email Address</title>
+          <style>
+              body {
+                  font-family: Arial, sans-serif;
+                  background-color: #f4f4f4;
+                  padding: 20px;
+              }
+              .container {
+                  max-width: 600px;
+                  background: #ffffff;
+                  padding: 20px;
+                  border-radius: 8px;
+                  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                  text-align: center;
+              }
+              .btn {
+                  display: inline-block;
+                  background-color: #28a745;
+                  color: #ffffff;
+                  padding: 10px 20px;
+                  text-decoration: none;
+                  border-radius: 5px;
+                  font-size: 16px;
+                  margin-top: 20px;
+              }
+              .footer {
+                  margin-top: 20px;
+                  font-size: 12px;
+                  color: #666;
+              }
+          </style>
+      </head>
+      <body>
+          <div class="container">
+              <h2>Verify Your Email Address</h2>
+              <p>Thank you for signing up! To complete your registration, please verify your email address by clicking the button below:</p>
+              <a href="${verifyUrl}" >Verify Email</a>
+              <p>This link will expire in 1 hour.</p>
+              <div class="footer">
+                  <p>If you didn't create an account with us, please ignore this email.</p>
+                  <p>© ${new Date().getFullYear()} Reeliic. All rights reserved.</p>
+              </div>
+          </div>
+      </body>
+      </html>`;
+};
+
 export const resetPasswordLinkEmail = (resetToken) => {
   return `<!DOCTYPE html>
     <html>

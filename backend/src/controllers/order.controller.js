@@ -248,6 +248,7 @@ export const khaltiPayment = async (req, res) => {
       rentalStartDate,
       rentalEndDate,
     } = req.body;
+
     const { origin } = req.headers;
 
     if (!bikeId || !amount) {
@@ -271,7 +272,7 @@ export const khaltiPayment = async (req, res) => {
     const totalAmount = (amount + deliveryCharge) * 100;
 
     const payload = {
-      purchase_order_id: `${Date.now()}-${bikeId}`, // temp ID
+      purchase_order_id: `${Date.now()}-${bikeId}`,
       return_url: `${origin}/verify-khalti?method=khalti`,
       website_url: origin,
       amount: totalAmount,

@@ -25,7 +25,7 @@ const BikeColors = z.enum([
 
 const ABSOptions = z.enum(["ABS", "Non-ABS", "Dual-Channel ABS"]);
 const FrameSizes = z.enum(["Small", "Medium", "Large"]);
-const BikeCondition = z.enum(["New", "Perfect", "Good"]);
+const BikeCondition = z.enum(["New", "Used"]);
 
 const productZodSchema = z
   .object({

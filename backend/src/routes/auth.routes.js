@@ -17,6 +17,7 @@ authRouter.post(
   upload.fields([{ name: "avatar", maxCount: 1 }]),
   signup
 );
+
 authRouter.post("/signin", signin);
 authRouter.post("/forgot-password", forgotPassword);
 authRouter.post("/reset-password/:resetToken", resetPassword);

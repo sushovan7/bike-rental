@@ -31,6 +31,10 @@ const userSchema = new mongoose.Schema(
       default: false,
       required: true,
     },
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
     refreshToken: {
       type: String,
     },
@@ -39,6 +43,14 @@ const userSchema = new mongoose.Schema(
       default: undefined,
     },
     resetPasswordTokenExpiresAt: {
+      type: Date,
+      default: undefined,
+    },
+    emailVerifyToken: {
+      type: "string",
+      default: undefined,
+    },
+    emailVerifyExpiredAt: {
       type: Date,
       default: undefined,
     },
