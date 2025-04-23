@@ -32,7 +32,7 @@ function Inventory() {
           product.brandName.toLowerCase().includes(trimmedSearch)
       );
     } else {
-      filtered = data.products; // Reset if search is cleared
+      filtered = data.products;
     }
 
     if (filterType) {
@@ -183,7 +183,7 @@ function Inventory() {
                       onChange={() => setFilterType("New")}
                       className="radio radio-primary"
                     />
-                    <span>New</span>
+                    <span>For Sale</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input
@@ -193,7 +193,7 @@ function Inventory() {
                       onChange={() => setFilterType("Used")}
                       className="radio radio-primary"
                     />
-                    <span>Used</span>
+                    <span>For Rent</span>
                   </label>
                   <label className="flex items-center gap-2">
                     <input
@@ -228,7 +228,6 @@ function Inventory() {
         )}
       </AnimatePresence>
 
-      {/* Results Count */}
       <div className="mb-6 text-gray-400">
         Showing {productsToDisplay.length} of {filteredProducts.length} bikes
         {(filterType || filterByCategory || searchInput) && (
@@ -243,6 +242,7 @@ function Inventory() {
             ))
           : "No Products Available"}
       </div>
+
       <div className="join mt-6 flex gap-4">
         <button
           disabled={currentPage === 1}

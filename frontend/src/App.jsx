@@ -4,6 +4,7 @@ import { Toaster } from "react-hot-toast";
 import LoadingScreen from "./components/LoadingScreen";
 import ProtectedRoutes from "./components/ProtectedRoutes";
 import EditReview from "./pages/EditReview";
+import VerifyEmail from "./pages/VerifyEmail";
 
 const ProductDetails = lazy(() => import("./pages/ProductDetails"));
 const PlaceOrder = lazy(() => import("./pages/PlaceOrder"));
@@ -134,6 +135,7 @@ function App() {
                 </ProtectedRoutes>
               }
             />
+            <Route path="verify-email" element={<VerifyEmail />} />
 
             {/* error routes */}
             <Route path="*" element={<Error />} />

@@ -8,7 +8,7 @@ function VerifyKhalti() {
   const navigate = useNavigate();
 
   const { token } = useSelector((state) => state.auth);
-  const calledRef = useRef(false); // 👈 added ref
+  const calledRef = useRef(false);
 
   const verifyPayment = async () => {
     if (!token) {
@@ -67,7 +67,7 @@ function VerifyKhalti() {
   useEffect(() => {
     if (!calledRef.current) {
       calledRef.current = true;
-      verifyPayment(); // ✅ only call once
+      verifyPayment();
     }
   }, [token]);
 
