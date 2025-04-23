@@ -9,65 +9,61 @@ import {
 } from "lucide-react";
 
 function Dashboard() {
-  // Time period state
   const [timePeriod, setTimePeriod] = useState("week");
 
-  // Metrics data - replace with your API data
   const metrics = [
     {
       title: "Total Users",
       value: "2,450",
-      icon: <Users className="text-primary" />,
+      icon: <Users className="text-blue-500" />,
       change: "+8%",
       isPositive: true,
     },
     {
       title: "KYC Verified",
       value: "1,890",
-      icon: <UserCheck className="text-secondary" />,
+      icon: <UserCheck className="text-green-500" />,
       change: "+12%",
       isPositive: true,
     },
     {
       title: "Total Bikes",
       value: "320",
-      icon: <Bike className="text-accent" />,
+      icon: <Bike className="text-purple-500" />,
       change: "+5%",
       isPositive: true,
     },
     {
       title: "Currently Rented",
       value: "142",
-      icon: <Bike className="text-info" />,
+      icon: <Bike className="text-yellow-500" />,
       change: "-3%",
       isPositive: false,
     },
     {
       title: "Bikes Sold",
       value: "28",
-      icon: <Bike className="text-success" />,
+      icon: <Bike className="text-red-500" />,
       change: "+15%",
       isPositive: true,
     },
     {
       title: "Total Revenue",
       value: "$24,580",
-      icon: <DollarSign className="text-warning" />,
+      icon: <DollarSign className="text-emerald-500" />,
       change: "+18%",
       isPositive: true,
     },
   ];
 
-  // Bike categories data
   const bikeCategories = [
-    { name: "Electric", percentage: 35, color: "bg-primary" },
-    { name: "Mountain", percentage: 25, color: "bg-secondary" },
-    { name: "Road", percentage: 20, color: "bg-accent" },
-    { name: "Hybrid", percentage: 15, color: "bg-success" },
-    { name: "Other", percentage: 5, color: "bg-warning" },
+    { name: "Electric", percentage: 35, color: "bg-blue-500" },
+    { name: "Mountain", percentage: 25, color: "bg-purple-500" },
+    { name: "Road", percentage: 20, color: "bg-green-500" },
+    { name: "Hybrid", percentage: 15, color: "bg-yellow-500" },
+    { name: "Other", percentage: 5, color: "bg-gray-500" },
   ];
 
-  // Revenue data by time period
   const revenueData = {
     day: [1200, 1800, 1500, 2000, 1700, 2200, 1900],
     week: [8500, 9200, 7800, 10500, 9800, 11200, 12400],
@@ -77,7 +73,6 @@ function Dashboard() {
     alltime: [520000],
   };
 
-  // Calculate total for current period
   const currentRevenue = revenueData[timePeriod].reduce((a, b) => a + b, 0);
   const prevRevenue =
     timePeriod === "day"
@@ -95,40 +90,42 @@ function Dashboard() {
   ).toFixed(0);
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Bike Rental Dashboard</h1>
-        <p className="text-neutral-content">Weekly performance overview</p>
+    <div className="p-6 max-w-7xl mx-auto space-y-8 bg-base-100">
+      <div>
+        <h1 className="text-3xl font-bold text-base-content">
+          Bike Rental & Sales Dashboard
+        </h1>
+        <p className="text-sm text-base-content/70">Performance overview</p>
       </div>
 
       {/* Metrics Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
-        {metrics.map((metric, index) => (
-          <div key={index} className="card bg-base-100 shadow-sm">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        {metrics.map((m, i) => (
+          <div
+            key={i}
+            className="card bg-base-200 shadow-sm hover:shadow-md transition-shadow"
+          >
             <div className="card-body p-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-sm font-medium text-neutral-content">
-                    {metric.title}
+                  <p className="text-sm text-base-content/70">{m.title}</p>
+                  <p className="text-xl font-semibold mt-1 text-base-content">
+                    {m.value}
                   </p>
-                  <p className="text-xl font-bold mt-1">{metric.value}</p>
                 </div>
-                <div className="p-2 rounded-full bg-opacity-20 bg-primary">
-                  {metric.icon}
-                </div>
+                <div className="p-2 rounded-full bg-base-300/50">{m.icon}</div>
               </div>
               <div
-                className={`flex items-center mt-2 text-sm ${
-                  metric.isPositive ? "text-success" : "text-error"
+                className={`flex items-center text-sm mt-2 ${
+                  m.isPositive ? "text-success" : "text-error"
                 }`}
               >
-                {metric.isPositive ? (
+                {m.isPositive ? (
                   <TrendingUp size={16} />
                 ) : (
                   <TrendingDown size={16} />
                 )}
-                <span className="ml-1">{metric.change} from last week</span>
+                <span className="ml-1">{m.change}</span>
               </div>
             </div>
           </div>
@@ -137,132 +134,81 @@ function Dashboard() {
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Bike Categories Pie Chart */}
-        <div className="card bg-base-100 shadow-sm">
-          <div className="card-body">
-            <h2 className="card-title mb-4">Bike Categories Distribution</h2>
-
-            <div className="flex flex-col lg:flex-row items-center gap-8">
-              {/* Pie Chart Visualization */}
-              <div className="relative w-48 h-48">
-                <div className="absolute inset-0 rounded-full border-[20px] border-transparent">
-                  {bikeCategories.map((category, i) => {
-                    const offset = bikeCategories
-                      .slice(0, i)
-                      .reduce((sum, c) => sum + c.percentage, 0);
-                    return (
-                      <div
-                        key={i}
-                        className={`absolute inset-0 rounded-full border-[20px] ${category.color}`}
-                        style={{
-                          clipPath: `polygon(50% 50%, ${
-                            50 + 50 * Math.cos((2 * Math.PI * offset) / 100)
-                          }% ${
-                            50 + 50 * Math.sin((2 * Math.PI * offset) / 100)
-                          }%, ${
-                            50 +
-                            50 *
-                              Math.cos(
-                                (2 * Math.PI * (offset + category.percentage)) /
-                                  100
-                              )
-                          }% ${
-                            50 +
-                            50 *
-                              Math.sin(
-                                (2 * Math.PI * (offset + category.percentage)) /
-                                  100
-                              )
-                          }%)`,
-                        }}
-                      ></div>
-                    );
-                  })}
-                </div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="bg-base-100 w-24 h-24 rounded-full flex items-center justify-center">
-                    <span className="font-bold">100%</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Legend */}
-              <div className="space-y-2">
-                {bikeCategories.map((category, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <div
-                      className={`w-4 h-4 rounded-full ${category.color}`}
-                    ></div>
-                    <span>
-                      {category.name} - {category.percentage}%
+        {/* Bike Categories */}
+        <div className="card bg-base-200 shadow-sm">
+          <div className="card-body p-6">
+            <h2 className="card-title text-lg text-base-content">
+              Bike Categories
+            </h2>
+            <div className="space-y-4 mt-4">
+              {bikeCategories.map((c, i) => (
+                <div key={i}>
+                  <div className="flex justify-between mb-1">
+                    <span className="text-sm font-medium text-base-content">
+                      {c.name}
+                    </span>
+                    <span className="text-sm text-base-content">
+                      {c.percentage}%
                     </span>
                   </div>
-                ))}
-              </div>
+                  <div className="w-full bg-base-300 rounded-full h-2.5">
+                    <div
+                      className={`h-2.5 rounded-full ${c.color}`}
+                      style={{ width: `${c.percentage}%` }}
+                    ></div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Revenue Bar Chart */}
-        <div className="card bg-base-100 shadow-sm">
-          <div className="card-body">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="card-title">Revenue Analysis</h2>
-              <div className="flex gap-2">
+        {/* Revenue Chart */}
+        <div className="card bg-base-200 shadow-sm">
+          <div className="card-body p-6">
+            <div className="flex justify-between items-center">
+              <h2 className="card-title text-lg text-base-content">Revenue</h2>
+              <div className="flex gap-1">
                 {["day", "week", "month", "3month", "6month", "alltime"].map(
-                  (period) => (
+                  (p) => (
                     <button
-                      key={period}
+                      key={p}
                       className={`btn btn-xs ${
-                        timePeriod === period ? "btn-primary" : "btn-ghost"
+                        timePeriod === p ? "btn-primary" : "btn-ghost"
                       }`}
-                      onClick={() => setTimePeriod(period)}
+                      onClick={() => setTimePeriod(p)}
                     >
-                      {period === "3month"
-                        ? "3M"
-                        : period === "6month"
-                        ? "6M"
-                        : period}
+                      {p === "3month" ? "3M" : p === "6month" ? "6M" : p}
                     </button>
                   )
                 )}
               </div>
             </div>
 
-            <div className="flex items-end justify-between h-64 mt-4 gap-2 px-4">
+            <div className="flex gap-2 items-end h-48 mt-6">
               {revenueData[timePeriod].map((amount, i) => (
-                <div key={i} className="flex flex-col items-center flex-1">
+                <div key={i} className="flex-1 flex flex-col items-center">
                   <div
-                    className="w-full bg-primary rounded-t hover:bg-primary-focus transition-colors"
+                    className="w-full bg-primary rounded-t"
                     style={{
                       height: `${
-                        (amount / Math.max(...revenueData[timePeriod])) * 90
+                        (amount / Math.max(...revenueData[timePeriod])) * 100
                       }%`,
                     }}
                   ></div>
-                  <span className="text-xs mt-2">
+                  <span className="text-xs mt-1 text-base-content/70">
                     {timePeriod === "day"
                       ? ["M", "T", "W", "T", "F", "S", "S"][i]
-                      : timePeriod === "week"
-                      ? `Week ${i + 1}`
-                      : timePeriod === "month"
-                      ? `M${i + 1}`
-                      : timePeriod === "3month"
-                      ? `Q${i + 1}`
-                      : timePeriod === "6month"
-                      ? `H${i + 1}`
-                      : "All"}
+                      : `#${i + 1}`}
                   </span>
                 </div>
               ))}
             </div>
 
-            <div className="mt-6 flex justify-between items-center">
+            <div className="flex justify-between items-center mt-6">
               <div>
-                <p className="text-sm text-neutral-content">
-                  Total {timePeriod} revenue
-                </p>
-                <p className="text-2xl font-bold">
+                <p className="text-sm text-base-content/70">Total</p>
+                <p className="text-xl font-bold text-base-content">
                   ${currentRevenue.toLocaleString()}
                 </p>
               </div>

@@ -38,7 +38,7 @@ const ABSOptions = ["ABS", "Non-ABS", "Dual-Channel ABS"];
 
 const FrameSizes = ["Small", "Medium", "Large"];
 
-const BikeCondition = ["New", "Perfect", "Good"];
+const BikeCondition = ["New", "Used"];
 
 function AddProduct() {
   const [image1, setImage1] = useState(null);
