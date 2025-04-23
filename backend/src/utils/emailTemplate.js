@@ -1,5 +1,5 @@
-export const emailVerificationTemplate = (emailVerifyToken, id) => {
-  const verifyUrl = `${process.env.CLIENT_URL}/verify-email?token=${token}&id=${userId}`;
+export const emailVerificationTemplate = (token) => {
+  const verifyUrl = `${process.env.CLIENT_URL}/verify-email?token=${token}`;
   return `<!DOCTYPE html>
       <html>
       <head>

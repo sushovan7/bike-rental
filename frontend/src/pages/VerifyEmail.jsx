@@ -1,53 +1,68 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+
+const verifyEmailAPI = async (token) => {
+  const response = await axios.post(
+    `${import.meta.env.VITE_BACKEND_BASE_URL}/auth/verify-email`,
+    { emailVerifyToken: token }
+  );
+  return response.data;
+};
 
 const VerifyEmail = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [status, setStatus] = useState("Verifying...");
+  const token = searchParams.get("token");
+  console.log(token);
+
+  const {
+    mutate: verifyEmail,
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+    data,
+  } = useMutation({
+    mutationFn: verifyEmailAPI,
+  });
 
   useEffect(() => {
-    const token = searchParams.get("token");
-    const id = searchParams.get("id");
-
-    if (!token || !id) {
-      setStatus("Invalid verification link.");
-      return;
+    if (token) {
+      verifyEmail(token);
     }
-
-    const verifyEmail = async () => {
-      try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/auth/verify-email`,
-          {
-            params: { token, id },
-          }
-        );
-
-        if (res.data.success) {
-          setStatus("Email verified successfully! Redirecting...");
-          setTimeout(() => navigate("/login"), 3000);
-        } else {
-          setStatus("Verification failed.");
-        }
-      } catch (error) {
-        setStatus(
-          error.response?.data?.message ||
-            "Something went wrong during verification."
-        );
-      }
-    };
-
-    verifyEmail();
-  }, [searchParams, navigate]);
+  }, [token, verifyEmail]);
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-100">
-      <div className="bg-white p-6 rounded shadow-md text-center max-w-md">
-        <h2 className="text-xl font-bold mb-4">Email Verification</h2>
-        <p>{status}</p>
-      </div>
+    <div className="flex flex-col items-center justify-center min-h-screen px-4">
+      {isLoading && <p className="text-blue-500">Verifying your email...</p>}
+
+      {isSuccess && (
+        <div className="text-center">
+          <h1 className="text-green-600 text-xl font-semibold">
+            Email Verified Successfully
+          </h1>
+          <p className="mt-2 text-white">{data?.message}</p>
+          <button
+            onClick={() => navigate("/login")}
+            className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+          >
+            Go to Login
+          </button>
+        </div>
+      )}
+
+      {isError && (
+        <div className="text-center">
+          <h1 className="text-red-600 text-xl font-semibold">
+            Verification Failed
+          </h1>
+          <p className="mt-2 text-gray-700">
+            {error.response?.data?.message || "Something went wrong"}
+          </p>
+        </div>
+      )}
     </div>
   );
 };

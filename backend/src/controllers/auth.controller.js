@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import transporter from "../utils/nodemailerConfig.js";
 import {
+  emailVerificationTemplate,
   resetPasswordLinkEmail,
   successPasswordResetMail,
 } from "../utils/emailTemplate.js";
@@ -27,7 +28,6 @@ export async function signup(req, res) {
       gender: z.enum(["MALE", "FEMALE", "OTHERS"], {
         message: "Gender must be one of 'male', 'female', or 'other'",
       }),
-      //   kycVerified: { type: Boolean, default: false },
     });
 
     const requiredBody = requiredUserData.safeParse(req.body);
@@ -81,6 +81,8 @@ export async function signup(req, res) {
       });
     }
 
+    const emailVerifyToken = crypto.randomBytes(20).toString("hex");
+
     const createUser = new userModel({
       firstName: firstName.toLowerCase(),
       lastName: lastName.toLowerCase(),
@@ -89,9 +91,22 @@ export async function signup(req, res) {
       age,
       gender,
       avatar: avatarUrl,
+      emailVerifyToken,
+      emailVerifyExpiredAt: Date.now() + 24 * 60 * 60 * 1000,
     });
 
     await createUser.save();
+
+    const emailVerificationContent = emailVerificationTemplate(
+      emailVerifyToken,
+      createUser._id
+    );
+    await transporter.sendMail({
+      from: process.env.EMAIL_FROM,
+      to: createUser.email,
+      subject: "Email verification Link",
+      html: emailVerificationContent,
+    });
 
     const user = await userModel.findById(createUser._id).select("-password");
 
@@ -151,6 +166,13 @@ export async function signin(req, res) {
       return res.status(400).json({
         success: false,
         message: "Email or password is incorrect",
+      });
+    }
+
+    if (!user.emailVerified) {
+      return res.status(400).json({
+        success: false,
+        message: "Please verify your email first to login",
       });
     }
 
@@ -227,7 +249,7 @@ export async function logout(req, res) {
 export async function refreshAccessToken(req, res) {
   try {
     const incomingRefreshToken = req.cookies.refreshToken;
-    console.log(incomingRefreshToken);
+
     if (!incomingRefreshToken) {
       return res
         .status(401)
@@ -352,7 +374,7 @@ export async function resetPassword(req, res) {
     });
 
     const requiredBody = requiredUserData.safeParse(req.body);
-    console.log("Validation result:", requiredBody);
+
     if (!requiredBody.success) {
       return res.status(409).json({
         success: false,
@@ -408,3 +430,34 @@ export async function resetPassword(req, res) {
     });
   }
 }
+
+export const verifyEmail = async (req, res) => {
+  const { emailVerifyToken } = req.body;
+
+  try {
+    const user = await userModel.findOne({
+      emailVerifyToken,
+      emailVerifyExpiredAt: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired verification code",
+      });
+    }
+
+    user.emailVerified = true;
+    user.emailVerifyToken = undefined;
+    user.emailVerifyExpiredAt = undefined;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Email verified successfully",
+    });
+  } catch (error) {
+    console.log("error in verifyEmail ", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
