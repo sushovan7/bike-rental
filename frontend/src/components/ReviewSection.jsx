@@ -139,10 +139,6 @@ function ProductDetails({ productId }) {
     }
   }
 
-  if (!reviewsToDisPlay) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className="container mx-auto p-4 flex flex-col">
       <div className="mt-8">
@@ -203,7 +199,7 @@ function ProductDetails({ productId }) {
         </form>
         {/* Display Reviews */}
         <div className="space-y-4">
-          {reviewsToDisPlay && reviewsToDisPlay.length > 0 ? (
+          {reviewsToDisPlay && reviewsToDisPlay.length ? (
             reviewsToDisPlay.map((review) => (
               <div
                 key={review._id}
