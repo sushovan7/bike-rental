@@ -32,7 +32,9 @@ function Signup() {
 
     onSuccess: (data) => {
       if (data.success) {
-        toast.success("User registered successfully!");
+        toast.success(
+          "User registered successfully. A Email verification link has been sent to your email."
+        );
       }
       reset();
       navigate("/login");
