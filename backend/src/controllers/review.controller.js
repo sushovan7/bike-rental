@@ -108,9 +108,18 @@ export async function getBikeReview(req, res) {
       })
       .populate("userId", "firstName");
 
+    const totalReviews = bikeReviews.length;
+    const averageRating =
+      totalReviews > 0
+        ? bikeReviews.reduce((sum, review) => sum + review.rating, 0) /
+          totalReviews
+        : 0;
+
     return res.status(200).json({
       success: true,
       bikeReviews,
+      averageRating: Number(averageRating.toFixed(1)),
+      totalReviews,
     });
   } catch (error) {
     return res.status(500).json({
