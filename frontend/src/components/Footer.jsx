@@ -23,7 +23,7 @@ function Footer() {
               height={40}
               className="rounded-full"
             />
-            REELEIIC
+            REELIIC
           </Link>
           <p className="w-full text-sm md:w-[75%] text-gray-400">
             Rent a bike and embark on an exciting journey through your city.
@@ -115,7 +115,7 @@ function Footer() {
       <div className="flex items-center justify-between">
         {" "}
         <div className="py-4 font-mono text-white text-sm text-center w-full ">
-          Copyright {new Date().getFullYear()} @ REELEIIC - All Right Reserved.
+          Copyright {new Date().getFullYear()} @ REELIIC - All Right Reserved.
         </div>
       </div>
 

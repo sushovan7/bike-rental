@@ -102,7 +102,7 @@ function Navbar() {
             height={40}
             className="rounded-full"
           />
-          REELEIIC
+          REELIIC
         </Link>
       </div>
       <div className="navbar-center hidden lg:flex">

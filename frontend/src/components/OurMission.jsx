@@ -36,8 +36,8 @@ function OurMission() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-gray-400"
           >
-            At Reeleiic, we strive to revolutionize the bike rental experience
-            by making mobility more accessible, affordable, and convenient. Our
+            At Reeliic, we strive to revolutionize the bike rental experience by
+            making mobility more accessible, affordable, and convenient. Our
             platform is designed to provide users with a seamless way to rent or
             purchase high-quality bikes, whether for daily commutes, leisure
             rides, or long adventures.

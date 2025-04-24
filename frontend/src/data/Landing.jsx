@@ -94,23 +94,23 @@ export const howItWorksData = [
 export const testimonialsData = [
   {
     name: "Sarah Johnson",
-    role: "Small Business Owner",
+    role: "Bike Enthusiast",
     image: "https://randomuser.me/api/portraits/women/75.jpg",
     quote:
-      "Welth has transformed how I manage my business finances. The AI insights have helped me identify cost-saving opportunities I never knew existed.",
+      "Reeliic made it so easy to rent a bike while traveling. The entire process was smooth, and the bike was in top-notch condition!",
   },
   {
     name: "Michael Chen",
-    role: "Freelancer",
+    role: "Weekend Rider",
     image: "https://randomuser.me/api/portraits/men/75.jpg",
     quote:
-      "The receipt scanning feature saves me hours each month. Now I can focus on my work instead of manual data entry and expense tracking.",
+      "I’ve used Reeliic to both rent and buy bikes — it's incredibly convenient and user-friendly. I love how transparent the pricing is.",
   },
   {
     name: "Emily Rodriguez",
-    role: "Financial Advisor",
+    role: "Delivery Partner",
     image: "https://randomuser.me/api/portraits/women/74.jpg",
     quote:
-      "I recommend Welth to all my clients. The multi-currency support and detailed analytics make it perfect for international investors.",
+      "Reeliic helped me get a reliable bike for my delivery work. Their support team is amazing and the rental plans are flexible and affordable.",
   },
 ];

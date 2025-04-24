@@ -77,7 +77,7 @@ function Contact() {
                   <span className="text-[#605DFF]">📧</span>
                   <div>
                     <strong className="text-white">Email:</strong>
-                    <p>support@reeleiic.com</p>
+                    <p>support@reeliic.com</p>
                   </div>
                 </li>
               </ul>
@@ -90,7 +90,7 @@ function Contact() {
               </h3>
               <p className="text-gray-400 mb-6">
                 We are always looking for passionate individuals to join
-                Reeleiic. Check out our current openings and be part of our
+                Reeliic. Check out our current openings and be part of our
                 journey to revolutionize bike rentals.
               </p>
               <motion.button
