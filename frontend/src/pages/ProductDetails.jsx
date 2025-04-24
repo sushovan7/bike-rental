@@ -22,6 +22,7 @@ import ReviewSection from "../components/ReviewSection";
 import { useEffect } from "react";
 import BestsellerProducts from "../components/BestSellerProducts";
 import RecentProducts from "../components/RecentProducts";
+import AverageStarRating from "../components/AverageStarRating";
 
 function ProductDetails() {
   const { token } = useSelector((state) => state.auth);
@@ -31,6 +32,23 @@ function ProductDetails() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
+
+  const { data: reviewData } = useQuery({
+    queryKey: ["getreviews"],
+    queryFn: async () => {
+      const response = await axios.get(
+        `${
+          import.meta.env.VITE_BACKEND_BASE_URL
+        }/review/reviews/bike/${productId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    },
+  });
 
   async function fetchProducts() {
     try {
@@ -73,6 +91,10 @@ function ProductDetails() {
     return <div>No product data available.</div>;
   }
 
+  if (!reviewData) {
+    return <div>please wait...</div>;
+  }
+
   const responsive = {
     superLargeDesktop: {
       breakpoint: { max: 4000, min: 3000 },
@@ -102,38 +124,9 @@ function ProductDetails() {
           Your dream BIKE for{" "}
           {data.product.condition === "New" ? "sale" : "rent"}
         </p>
-        <div className="rating rating-xs mt-2">
-          <input
-            type="radio"
-            name="rating-5"
-            className="mask mask-star-2 bg-orange-400"
-            aria-label="1 star"
-          />
-          <input
-            type="radio"
-            name="rating-5"
-            className="mask mask-star-2 bg-orange-400"
-            aria-label="2 star"
-            defaultChecked
-          />
-          <input
-            type="radio"
-            name="rating-5"
-            className="mask mask-star-2 bg-orange-400"
-            aria-label="3 star"
-          />
-          <input
-            type="radio"
-            name="rating-5"
-            className="mask mask-star-2 bg-orange-400"
-            aria-label="4 star"
-          />
-          <input
-            type="radio"
-            name="rating-5"
-            className="mask mask-star-2 bg-orange-400"
-            aria-label="5 star"
-          />
+        <div className="flex gap-2 items-end ">
+          <AverageStarRating averageRating={reviewData.averageRating} />
+          <span className="text-sm">Rating {reviewData.totalReviews}</span>
         </div>
       </div>
 

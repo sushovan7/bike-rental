@@ -6,8 +6,9 @@ import { toast } from "react-hot-toast";
 import { ArrowLeft, ArrowRight, Edit2, Loader2, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import StarRating from "../components/StarRating"; // Update the path if necessary
 
-function ProductDetails({ productId }) {
+function ReviewSection({ productId }) {
   const queryClient = useQueryClient();
   const { token, user } = useSelector((state) => state.auth);
   const [currentPage, setCurrentPage] = useState(1);
@@ -57,29 +58,16 @@ function ProductDetails({ productId }) {
       if (data.success) {
         toast.success(data.message || "Review submitted successfully");
         reset();
-        queryClient.invalidateQueries(["getReviews"]);
+        queryClient.invalidateQueries(["getreviews"]);
       }
     },
     onError: (error) => {
-      if (error.response) {
-        const errorMessage =
-          error.response.data?.message || "Failed to submit review";
-        toast.error(errorMessage);
-      } else {
-        toast.error("Something went wrong. Please try again.");
-      }
+      toast.error(
+        error.response?.data?.message ||
+          "Something went wrong. Please try again."
+      );
     },
   });
-
-  const onSubmit = (data) => {
-    const reviewData = {
-      ...data,
-      bikeId: productId,
-      rating: Number(data.rating),
-    };
-
-    postReviewMutation.mutate(reviewData);
-  };
 
   const deleteReviewMutation = useMutation({
     mutationFn: async (reviewId) => {
@@ -97,17 +85,14 @@ function ProductDetails({ productId }) {
       if (data.success) {
         toast.success(data.message || "Review deleted successfully");
         reset();
-        queryClient.invalidateQueries(["getReviews"]);
+        queryClient.invalidateQueries(["getreviews"]);
       }
     },
     onError: (error) => {
-      if (error.response) {
-        const errorMessage =
-          error.response.data?.message || "Failed to delete review";
-        toast.error(errorMessage);
-      } else {
-        toast.error("Something went wrong. Please try again.");
-      }
+      toast.error(
+        error.response?.data?.message ||
+          "Something went wrong. Please try again."
+      );
     },
   });
 
@@ -120,13 +105,13 @@ function ProductDetails({ productId }) {
   }
 
   const itemsPerPage = 5;
-  const noOfPages = Math.floor(data.bikeReviews.length / itemsPerPage);
+  const noOfPages = Math.ceil(data.bikeReviews.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const reviewsToDisPlay =
-    data.bikeReviews &&
-    data.bikeReviews.length > 0 &&
-    [...data.bikeReviews].reverse().slice(startIndex, endIndex);
+  const reviewsToDisPlay = data.bikeReviews
+    ?.slice()
+    .reverse()
+    .slice(startIndex, endIndex);
 
   function handleNext() {
     if (currentPage < noOfPages) {
@@ -139,6 +124,16 @@ function ProductDetails({ productId }) {
     }
   }
 
+  const onSubmit = (formData) => {
+    const reviewData = {
+      ...formData,
+      bikeId: productId,
+      rating: Number(formData.rating),
+    };
+
+    postReviewMutation.mutate(reviewData);
+  };
+
   return (
     <div className="container mx-auto p-4 flex flex-col">
       <div className="mt-8">
@@ -146,24 +141,10 @@ function ProductDetails({ productId }) {
         <form onSubmit={handleSubmit(onSubmit)} className="mb-6">
           <div className="mb-4">
             <p className="text-sm font-medium mb-2">Your Rating</p>
-            <div className="rating rating-xs">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <input
-                  key={star}
-                  type="radio"
-                  {...register("rating", {
-                    required: "Rating is required",
-                    valueAsNumber: true,
-                  })}
-                  className="mask mask-star-2 bg-orange-400"
-                  aria-label={`${star} star`}
-                  name={`display-rating-${Math.random()}`}
-                  value={star}
-                  checked={star === rating}
-                  onChange={() => setValue("rating", star)}
-                />
-              ))}
-            </div>
+            <StarRating
+              value={rating}
+              onChange={(value) => setValue("rating", value)}
+            />
             {errors.rating && (
               <p className="mt-1 text-red-500 text-sm">
                 {errors.rating.message}
@@ -197,7 +178,7 @@ function ProductDetails({ productId }) {
             )}
           </button>
         </form>
-        {/* Display Reviews */}
+
         <div className="space-y-4">
           {reviewsToDisPlay && reviewsToDisPlay.length ? (
             reviewsToDisPlay.map((review) => (
@@ -206,7 +187,7 @@ function ProductDetails({ productId }) {
                 className="p-4 border border-gray-600 rounded-lg"
               >
                 <div className="flex relative items-center gap-2 mb-2">
-                  <div className="w-8  h-8 bg-gray-600 rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
                     <span className="text-sm font-semibold">
                       {review.userId?.firstName.charAt(0).toUpperCase()}
                     </span>
@@ -231,18 +212,8 @@ function ProductDetails({ productId }) {
                   )}
                 </div>
                 <p className="text-gray-400">{review.comment}</p>
-                <div className="rating rating-xs mt-2">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <input
-                      key={star}
-                      type="radio"
-                      name="display-rating"
-                      className="mask mask-star-2 bg-yellow-500"
-                      aria-label={`${star} star`}
-                      checked={star === review.rating}
-                      readOnly
-                    />
-                  ))}
+                <div className="mt-2">
+                  <StarRating value={review.rating} readOnly />
                 </div>
               </div>
             ))
@@ -250,6 +221,7 @@ function ProductDetails({ productId }) {
             <p>No reviews yet. Be the first to review!</p>
           )}
         </div>
+
         <div className="join mt-6 flex gap-4">
           <button
             disabled={currentPage === 1}
@@ -272,4 +244,4 @@ function ProductDetails({ productId }) {
   );
 }
 
-export default ProductDetails;
+export default ReviewSection;
