@@ -178,7 +178,9 @@ const ReviewKycRequest = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Date of Birth</p>
-                <p className="font-medium">{data.kycRequest.dateOfBirth}</p>
+                <p className="font-medium">
+                  {new Date(data.kycRequest.dateOfBirth).toDateString()}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Gender</p>
