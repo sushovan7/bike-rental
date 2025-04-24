@@ -501,3 +501,53 @@ export async function userOrders(req, res) {
     });
   }
 }
+
+export async function updateOrderStatus(req, res) {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body;
+
+    if (!orderId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Order ID is required" });
+    }
+
+    const validStatuses = [
+      "processing",
+      "shipped",
+      "out for delivery",
+      "delivered",
+      "cancelled",
+    ];
+    if (!validStatuses.includes(status.toLowerCase())) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid order status" });
+    }
+
+    const updatedOrder = await orderModel.findByIdAndUpdate(
+      orderId,
+      { orderStatus: status },
+      { new: true }
+    );
+
+    if (!updatedOrder) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Order status updated successfully",
+      data: updatedOrder,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update order status",
+      error: error.message,
+    });
+  }
+}

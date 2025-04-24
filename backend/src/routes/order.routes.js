@@ -7,6 +7,7 @@ import {
   khaltiPayment,
   placeCOD,
   stripePayment,
+  updateOrderStatus,
   userOrders,
   verifyKhaltiPayment,
 } from "../controllers/order.controller.js";
@@ -18,6 +19,6 @@ orderRouter.post("/stripe", auth, stripePayment);
 orderRouter.post("/confirm-stripe", auth, confirmStripe);
 orderRouter.get("/user-orders", auth, userOrders);
 orderRouter.get("/all-orders", adminAuth, allOrders);
-
+orderRouter.put("/update-status/:orderId", adminAuth, updateOrderStatus);
 orderRouter.post("/khalti", auth, khaltiPayment);
 orderRouter.post("/confirm-khalti", auth, verifyKhaltiPayment);
