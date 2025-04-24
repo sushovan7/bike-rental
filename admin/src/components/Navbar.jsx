@@ -89,7 +89,7 @@ function Navbar() {
               height={40}
               className="rounded-full"
             />
-            REELEIIC
+            REELIIC
           </Link>
         </div>
       </div>

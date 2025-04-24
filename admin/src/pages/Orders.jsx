@@ -27,12 +27,14 @@ function Orders() {
 
   async function updateOrderStatus(orderId, newStatus) {
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/order/update-status`,
-        { orderId, status: newStatus },
+      const response = await axios.put(
+        `${
+          import.meta.env.VITE_BACKEND_BASE_URL
+        }/order/update-status/${orderId}`,
+        { status: newStatus },
         {
           headers: {
-            token: localStorage.getItem("adminToken"),
+            token: localStorage.getItem("token"),
           },
         }
       );
@@ -57,22 +59,6 @@ function Orders() {
       </div>
     );
   }
-
-  const getStatusBadgeClass = (status) => {
-    switch (status) {
-      case "Delivered":
-        return "badge-success";
-      case "Cancelled":
-        return "badge-error";
-      case "Processing":
-        return "badge-info";
-      case "Shipped":
-      case "Out For Delivery":
-        return "badge-warning";
-      default:
-        return "badge-neutral";
-    }
-  };
 
   const getPaymentBadgeClass = (paymentMethod, isPaid) => {
     if (paymentMethod === "cod" || !isPaid) {
@@ -159,9 +145,7 @@ function Orders() {
                       onChange={(e) =>
                         updateOrderStatus(order._id, e.target.value)
                       }
-                      className={`select select-bordered select-sm ${getStatusBadgeClass(
-                        order.orderStatus
-                      )}`}
+                      className={`select select-bordered select-sm `}
                     >
                       <option value="Processing">Processing</option>
                       <option value="Shipped">Shipped</option>
@@ -242,12 +226,12 @@ function Orders() {
                     onChange={(e) =>
                       updateOrderStatus(order._id, e.target.value)
                     }
-                    className={`select select-bordered select-xs ${getStatusBadgeClass(
-                      order.orderStatus
-                    )}`}
+                    className={`select select-bordered select-xs `}
                   >
                     <option value="Processing">Processing</option>
-                    <option value="Shipped">Shipped</option>
+                    <option value="Shipped" className="text-white">
+                      Shipped
+                    </option>
                     <option value="Out For Delivery">Out For Delivery</option>
                     <option value="Delivered">Delivered</option>
                     <option value="Cancelled">Cancelled</option>
