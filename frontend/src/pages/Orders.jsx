@@ -8,7 +8,6 @@ function Orders() {
   const { token } = useSelector((state) => state.auth);
   const [orderData, setOrderData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  console.log(orderData);
 
   const loadOrderdata = async () => {
     try {
@@ -100,6 +99,16 @@ function Orders() {
             View and manage your rental and purchase history
           </p>
         </motion.div>
+        <div className="flex justify-end mb-6">
+          <motion.button
+            onClick={() => loadOrderdata()}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-6 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm font-medium transition-colors"
+          >
+            Track All Orders
+          </motion.button>
+        </div>
 
         {orderData.length === 0 ? (
           <motion.div
@@ -207,13 +216,6 @@ function Orders() {
                         {order.orderStatus}
                       </span>
                     </div>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="px-6 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm font-medium transition-colors"
-                    >
-                      Track Order
-                    </motion.button>
                   </div>
                 </div>
               </motion.div>
