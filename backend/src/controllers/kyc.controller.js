@@ -173,15 +173,25 @@ export async function rejectKycRequest(req, res) {
       });
     }
 
-    const updatedKyc = await kycModel.findByIdAndUpdate(
-      requestId,
-      {
-        kycStatus: "REJECTED",
-      },
-      { new: true }
-    );
+    const existingKyc = await kycModel.findById(requestId);
 
-    if (!updatedKyc) {
+    if (!existingKyc) {
+      return res.status(404).json({
+        success: false,
+        message: "KYC request not found",
+      });
+    }
+
+    if (existingKyc.kycStatus === "VERIFIED") {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot reject a KYC request that has already been verified",
+      });
+    }
+
+    const deletedKyc = await kycModel.findByIdAndDelete(requestId);
+
+    if (!deletedKyc) {
       return res.status(404).json({
         success: false,
         message: "KYC request not found",
@@ -189,15 +199,15 @@ export async function rejectKycRequest(req, res) {
     }
 
     sendMail(
-      updatedKyc.emailAddress,
+      deletedKyc.emailAddress,
       "KYC Request Rejected",
-      kycRejectionEmail(updatedKyc.fullName, "Reeliic")
+      kycRejectionEmail(deletedKyc.fullName, "Reeliic")
     );
 
     return res.status(200).json({
       success: true,
-      message: "KYC request rejected successfully",
-      data: updatedKyc,
+      message: "KYC request rejected and deleted successfully",
+      data: deletedKyc,
     });
   } catch (error) {
     return res.status(500).json({
