@@ -12,6 +12,7 @@ import ReviewKycRequest from "./pages/ReviewKycRequest";
 import AddMessage from "./pages/AddMessage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Orders from "./pages/Orders";
+import UserMessage from "./pages/UserMessage";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
             <Route path="users" element={<AllUsers />} />
             <Route path="kyc-request" element={<KycRequest />} />
             <Route path="add-message" element={<AddMessage />} />
+            <Route path="user-message" element={<UserMessage />} />
             <Route path="orders" element={<Orders />} />
             <Route
               path="review-kyc-request/:requestId"

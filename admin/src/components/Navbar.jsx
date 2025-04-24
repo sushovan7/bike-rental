@@ -75,6 +75,7 @@ function Navbar() {
             <Link to={"/kyc-request"}>Kyc-Request</Link>
             <Link to="/orders">All Orders</Link>
             <Link to="/add-message">Add Message</Link>
+            <Link to="/user-message">User Message</Link>
           </ul>
         </div>
         <div className="navbar-start">

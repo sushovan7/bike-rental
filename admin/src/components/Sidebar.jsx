@@ -11,6 +11,7 @@ function Sidebar() {
       <NavItem to="/kyc-request" label="Kyc Request" />
       <NavItem to="/orders" label="All Orders" />
       <NavItem to="/add-message" label="Add Message" />
+      <NavItem to="/user-message" label="User Message" />
     </div>
   );
 }
