@@ -9,6 +9,7 @@ import { kycRouter } from "./kyc.routes.js";
 import { notificationRouter } from "./notification.routes.js";
 import { orderRouter } from "./order.routes.js";
 import { contactRouter } from "./contact.routes.js";
+import { dashboardRouter } from "./dashboard.routes.js";
 
 export const rootRouter = express.Router();
 
@@ -22,3 +23,4 @@ rootRouter.use("/kyc", kycRouter);
 rootRouter.use("/notification", notificationRouter);
 rootRouter.use("/order", orderRouter);
 rootRouter.use("/contact", contactRouter);
+rootRouter.use("/dashboard", dashboardRouter);
