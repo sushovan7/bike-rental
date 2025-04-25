@@ -89,8 +89,6 @@ function AddProduct() {
   const isCCDisabled = category === "Electric";
 
   function onSubmit(data) {
-    console.log(data);
-
     const formData = new FormData();
 
     formData.append("bikeName", data.bikeName);

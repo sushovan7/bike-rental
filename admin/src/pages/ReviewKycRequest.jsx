@@ -48,7 +48,7 @@ const ReviewKycRequest = () => {
           },
         }
       );
-      console.log(response.data);
+
       return response.data;
     },
     onSuccess: (data) => {

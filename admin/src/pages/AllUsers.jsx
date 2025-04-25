@@ -163,7 +163,6 @@ function AllUsers() {
     if (!file) {
       setError("avatar", { type: "manual", message: "Avatar is required" });
     } else {
-      console.log(file);
       setAvatar(file);
       setValue("avatar", file, { shouldValidate: true });
       clearErrors("avatar");
