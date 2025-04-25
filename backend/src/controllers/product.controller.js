@@ -69,7 +69,6 @@ export async function addProduct(req, res) {
         return result.url;
       })
     );
-    console.log("hello", imagesUrl);
 
     if (!imagesUrl) {
       return res.status(400).json({
@@ -260,7 +259,7 @@ export async function updateProduct(req, res) {
       const parts = imageUrl.split("/");
       const lastPart = parts[parts.length - 1];
       const publicId = lastPart.split(".")[0];
-      console.log(publicId);
+
       return publicId;
     });
 

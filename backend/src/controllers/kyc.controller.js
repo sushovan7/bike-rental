@@ -6,6 +6,7 @@ import {
   kycVerificationSuccessEmail,
 } from "../utils/emailTemplate.js";
 import { requiredKycData } from "../utils/kycValidation.js";
+import transporter from "../utils/nodemailerConfig.js";
 
 export async function createKyc(req, res) {
   try {

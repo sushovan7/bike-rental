@@ -42,7 +42,6 @@ export async function placeCOD(req, res) {
     user.redeemPoints =
       user.redeemPoints - usedRedeemPoints + earnedRedeemPoints;
     await user.save();
-    console.log(user);
 
     const orderDataToSave = {
       userId,

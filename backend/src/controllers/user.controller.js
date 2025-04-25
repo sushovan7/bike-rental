@@ -101,7 +101,6 @@ export async function updateUser(req, res) {
     const parts = user.avatar.split("/");
     const lastPart = parts[parts.length - 1];
     const publicId = lastPart.split(".")[0];
-    console.log(publicId);
 
     await deleteFromCloudinary(publicId);
 

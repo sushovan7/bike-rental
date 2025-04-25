@@ -11,7 +11,7 @@ const contactSchema = z.object({
 export const createContact = async (req, res) => {
   try {
     const { name, subject, message } = contactSchema.parse(req.body);
-    console.log(req.body);
+
     const userId = req.user._id;
 
     if (!userId) {
@@ -22,7 +22,6 @@ export const createContact = async (req, res) => {
     }
 
     const user = await userModel.findById(userId);
-    console.log(user);
 
     if (!user) {
       return res.status(400).json({

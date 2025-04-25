@@ -160,7 +160,6 @@ export async function readNotification(req, res) {
     }
 
     const readNotification = await notificationModel.findById(notification);
-    console.log(readNotification);
 
     readNotification.read = true;
 
