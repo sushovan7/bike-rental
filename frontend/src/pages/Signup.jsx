@@ -80,7 +80,6 @@ function Signup() {
     if (!file) {
       setError("avatar", { type: "manual", message: "Avatar is required" });
     } else {
-      console.log(file);
       setProfileImg(file);
       setValue("avatar", file, { shouldValidate: true });
       clearErrors("avatar");
@@ -88,7 +87,6 @@ function Signup() {
   };
 
   function onSubmit(data) {
-    console.log(data);
     if (!data.avatar) {
       setError("avatar", { type: "manual", message: "Avatar is required" });
       return;

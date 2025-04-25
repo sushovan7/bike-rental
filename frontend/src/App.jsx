@@ -115,7 +115,7 @@ function App() {
               path="place-order/:bikeId"
               element={
                 <ProtectedRoutes>
-                  <PlaceOrder />
+                  <PlaceOrder requireKyc={true} />
                 </ProtectedRoutes>
               }
             />

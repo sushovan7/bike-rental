@@ -14,7 +14,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
@@ -23,11 +23,14 @@ import { useEffect } from "react";
 import BestsellerProducts from "../components/BestSellerProducts";
 import RecentProducts from "../components/RecentProducts";
 import AverageStarRating from "../components/AverageStarRating";
+import toast from "react-hot-toast";
+import { updateUser } from "../features/auth/authSlice";
 
 function ProductDetails() {
-  const { token } = useSelector((state) => state.auth);
+  const { token, user } = useSelector((state) => state.auth);
   const { productId } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -49,6 +52,27 @@ function ProductDetails() {
       return response.data;
     },
   });
+
+  const { data: userData } = useQuery({
+    queryKey: ["userdata"],
+    queryFn: async () => {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/user/users/${user._id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    },
+  });
+
+  useEffect(() => {
+    if (userData) {
+      dispatch(updateUser(userData.user));
+    }
+  }, [userData, dispatch]);
 
   async function fetchProducts() {
     try {
@@ -78,6 +102,16 @@ function ProductDetails() {
     queryKey: ["products", productId],
     queryFn: fetchProducts,
   });
+
+  function handleNavigate() {
+    if (userData.user.kycVerified) {
+      navigate(`/place-order/${productId}`);
+    } else {
+      toast.error(
+        "Please verify your KYC first to buy or rent a bike, or if you've already submitted your KYC, please wait for admin approval."
+      );
+    }
+  }
 
   if (isPending) {
     return <div>...Loading</div>;
@@ -126,7 +160,7 @@ function ProductDetails() {
         </p>
         <div className="flex gap-2 items-end ">
           <AverageStarRating averageRating={reviewData.averageRating} />
-          <span className="text-sm">Rating {reviewData.totalReviews}</span>
+          <span className="text-sm">{reviewData.totalReviews} Reviews</span>
         </div>
       </div>
 
@@ -209,7 +243,7 @@ function ProductDetails() {
               </p>
             </div>
             <button
-              onClick={() => navigate(`/place-order/${productId}`)}
+              onClick={handleNavigate}
               className="mt-4 text-lg cursor-pointer w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-dark transitionn font-bold"
             >
               {data.product.condition === "New" ? "Buy Bike" : "Rent Bike"}

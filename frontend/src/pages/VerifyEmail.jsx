@@ -15,7 +15,6 @@ const VerifyEmail = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const token = searchParams.get("token");
-  console.log(token);
 
   const {
     mutate: verifyEmail,

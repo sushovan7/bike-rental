@@ -18,7 +18,6 @@ function PlaceOrder() {
   const [orderType, setOrderType] = useState("buy");
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
-  console.log(user._id);
 
   const today = new Date().toISOString().split("T")[0];
   const tomorrow = new Date();
@@ -92,7 +91,6 @@ function PlaceOrder() {
     queryKey: ["userInfo"],
     queryFn: fetchUser,
   });
-  console.log(userData);
 
   const { data, isError, error, isPending } = useQuery({
     queryKey: ["products", bikeId],

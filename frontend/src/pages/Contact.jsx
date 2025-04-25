@@ -17,7 +17,6 @@ function Contact() {
     formState: { errors },
   } = useForm();
   const { token } = useSelector((state) => state.auth);
-  console.log(token);
 
   const contactMutation = useMutation({
     mutationFn: async (formData) => {

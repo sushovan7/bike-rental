@@ -20,7 +20,6 @@ function Navbar() {
   const favouriteCount = useSelector(
     (state) => state.favourite.favouriteData.length
   );
-  console.log(favouriteCount);
 
   const mutation = useMutation({
     mutationKey: ["logout"],
