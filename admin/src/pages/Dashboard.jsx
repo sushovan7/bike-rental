@@ -384,7 +384,9 @@ const Dashboard = () => {
                 <table className="table table-zebra">
                   <thead>
                     <tr>
-                      <th>Customer</th>
+                      <th>Avatar</th>
+                      <th>Name</th>
+                      <th>Address</th>
                       <th>Type</th>
                       <th>Amount</th>
                       <th>Method</th>
@@ -403,15 +405,19 @@ const Dashboard = () => {
                                   <img src={item.userId?.avatar} alt="Avatar" />
                                 </div>
                               </div>
-                              <div>
-                                <div className="font-bold">
-                                  {item.userId?.firstName}{" "}
-                                  {item.userId?.lastName}
-                                </div>
-                                <div className="text-sm text-base-content/70">
-                                  {item.address?.city}
-                                </div>
+                            </div>
+                          </td>
+                          <td>
+                            <div>
+                              <div className="font-bold">
+                                {item.userId?.firstName} {item.userId?.lastName}
                               </div>
+                            </div>
+                          </td>
+                          <td>
+                            {" "}
+                            <div className="text-sm text-base-content/70">
+                              {item.address?.city} {item.address?.street}
                             </div>
                           </td>
                           <td>
