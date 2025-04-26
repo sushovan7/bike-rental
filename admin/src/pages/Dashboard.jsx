@@ -149,6 +149,7 @@ const Dashboard = () => {
     queryKey: ["dashboard"],
     queryFn: fetchDashboardData,
   });
+  console.log(data);
 
   const {
     data: bikeData,
@@ -582,34 +583,24 @@ const Dashboard = () => {
                 <div className="space-y-3">
                   <div>
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-base-content/70">
+                      <span className="text-base-content/70 badge badge-primary">
                         Rental Revenue
                       </span>
-                      <span className="font-medium">
-                        Rs {(stats.revenue * 0.7).toLocaleString()}
+                      <span className="font-medium ">
+                        Rs {data.breakdown.rentalRevenue}
                       </span>
                     </div>
-                    <progress
-                      className="progress progress-primary w-full"
-                      value="70"
-                      max="100"
-                    ></progress>
                   </div>
 
                   <div>
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-base-content/70">
+                      <div className="text-base-content/70 badge badge-secondary">
                         Sales Revenue
-                      </span>
+                      </div>
                       <span className="font-medium">
-                        Rs {(stats.revenue * 0.3).toLocaleString()}
+                        Rs {data.breakdown.salesRevenue}
                       </span>
                     </div>
-                    <progress
-                      className="progress progress-secondary w-full"
-                      value="30"
-                      max="100"
-                    ></progress>
                   </div>
                 </div>
               </div>
