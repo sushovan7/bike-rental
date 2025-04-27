@@ -16,6 +16,7 @@ function Orders() {
           },
         }
       );
+      console.log(response.data);
       setOrders(response.data.orders.reverse());
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -93,13 +94,13 @@ function Orders() {
                       <div className="avatar">
                         <div className="w-12 h-12 rounded">
                           <img
-                            src={order.bike.images[0]}
-                            alt={order.bike.bikeName}
+                            src={order.bike?.images[0]}
+                            alt={order.bike?.bikeName}
                           />
                         </div>
                       </div>
                       <div>
-                        <div className="font-bold">{order.bike.bikeName}</div>
+                        <div className="font-bold">{order.bike?.bikeName}</div>
                         <div className="text-sm opacity-50">
                           1 × Rs{order.amount}
                         </div>
@@ -171,13 +172,13 @@ function Orders() {
                   <div className="avatar">
                     <div className="w-16 h-16 rounded">
                       <img
-                        src={order.bike.images[0]}
-                        alt={order.bike.bikeName}
+                        src={order.bike?.images[0]}
+                        alt={order.bike?.bikeName}
                       />
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-bold">{order.bike.bikeName}</h3>
+                    <h3 className="font-bold">{order.bike?.bikeName}</h3>
                     <p className="text-sm opacity-50">1 × Rs{order.amount}</p>
                   </div>
                 </div>
