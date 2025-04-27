@@ -95,7 +95,7 @@ function Orders() {
                         <div className="w-12 h-12 rounded">
                           <img
                             src={order.bike?.images[0]}
-                            alt={order.bike?.bikeName}
+                            alt={order.bike?.bikeName || "image"}
                           />
                         </div>
                       </div>
@@ -173,7 +173,7 @@ function Orders() {
                     <div className="w-16 h-16 rounded">
                       <img
                         src={order.bike?.images[0]}
-                        alt={order.bike?.bikeName}
+                        alt={order.bike?.bikeName || "bike-image"}
                       />
                     </div>
                   </div>
