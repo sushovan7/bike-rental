@@ -2,27 +2,27 @@ import { z } from "zod";
 import { productModel } from "../models/product.models.js";
 import { reviewModel } from "../models/review.models.js";
 import { userModel } from "../models/user.models.js";
+import { orderModel } from "../models/order.models.js";
 
 export async function createReview(req, res) {
   try {
-    const requiredData = z.object({
+    const schema = z.object({
       comment: z
         .string()
-        .max(100, { message: "Comments must not be more that 100 characters" }),
+        .max(100, { message: "Comments must not be more than 100 characters" }),
       rating: z
         .number()
-        .min(1, { message: "Rating must atleast be 1" })
-        .max(5, { message: "rating must not be more that 5" }),
+        .min(1, { message: "Rating must be at least 1" })
+        .max(5, { message: "Rating must not be more than 5" }),
       bikeId: z.string().min(1, { message: "Bike ID is required" }),
     });
 
-    const requiredBody = requiredData.safeParse(req.body);
-
-    if (!requiredBody.success) {
+    const validated = schema.safeParse(req.body);
+    if (!validated.success) {
       return res.status(400).json({
         success: false,
         message: "Invalid inputs",
-        errors: requiredBody.error.errors,
+        errors: validated.error.errors,
       });
     }
 
@@ -38,12 +38,26 @@ export async function createReview(req, res) {
 
     const product = await productModel.findById(bikeId);
     if (!product) {
-      return res.status(500).json({
+      return res.status(404).json({
         success: false,
-        message: "Product not found",
+        message: "Bike not found",
       });
     }
 
+    // Check if user has an order with this bike
+    const hasOrdered = await orderModel.findOne({
+      userId,
+      bike: bikeId,
+    });
+
+    if (!hasOrdered) {
+      return res.status(403).json({
+        success: false,
+        message: "You can only review a bike you have purchased or rented.",
+      });
+    }
+
+    // Check if review already exists
     const existingReview = await reviewModel.findOne({
       userId,
       bikeId,
@@ -63,11 +77,10 @@ export async function createReview(req, res) {
       comment,
     });
 
+    // Optionally: store review in user's reviews list
     await userModel.findByIdAndUpdate(
       userId,
-      {
-        $addToSet: { reviews: review._id },
-      },
+      { $addToSet: { reviews: review._id } },
       { new: true }
     );
 
@@ -76,9 +89,11 @@ export async function createReview(req, res) {
       review,
     });
   } catch (error) {
+    console.error("Review Error:", error);
     return res.status(500).json({
       success: false,
       message: "Failed to create review",
+      error: error.message,
     });
   }
 }

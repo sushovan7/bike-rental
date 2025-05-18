@@ -269,7 +269,7 @@ export const khaltiPayment = async (req, res) => {
     }
 
     const userId = req.user._id;
-    const deliveryCharge = 15;
+    const deliveryCharge = 0;
     const totalAmount = (amount + deliveryCharge) * 100;
 
     const payload = {
@@ -388,7 +388,7 @@ export const verifyKhaltiPayment = async (req, res) => {
     }
 
     const khaltiAmount = verification.data.total_amount;
-    const deliveryCharge = 15;
+    const deliveryCharge = 0;
     const expectedAmount = Math.round((amount + deliveryCharge) * 100);
 
     if (khaltiAmount !== expectedAmount) {
