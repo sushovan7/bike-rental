@@ -44,7 +44,6 @@ export async function createReview(req, res) {
       });
     }
 
-    // Check if user has an order with this bike
     const hasOrdered = await orderModel.findOne({
       userId,
       bike: bikeId,
@@ -57,7 +56,6 @@ export async function createReview(req, res) {
       });
     }
 
-    // Check if review already exists
     const existingReview = await reviewModel.findOne({
       userId,
       bikeId,
@@ -77,7 +75,6 @@ export async function createReview(req, res) {
       comment,
     });
 
-    // Optionally: store review in user's reviews list
     await userModel.findByIdAndUpdate(
       userId,
       { $addToSet: { reviews: review._id } },
